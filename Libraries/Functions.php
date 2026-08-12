@@ -1200,4 +1200,18 @@
         
         return $Data;
     }
+
+	function LoadEnv($archivo) {
+		if (!file_exists($archivo)) {
+			throw new Exception("No se encontró el archivo .env");
+		}
+
+		$variables = parse_ini_file($archivo);
+
+		if ($variables === false) {
+			throw new Exception("No se pudo leer el archivo .env");
+		}
+
+		return $variables;
+	}
 ?>

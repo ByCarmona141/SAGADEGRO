@@ -8,10 +8,14 @@
 	 * Base de datos y permisos: No
 	 **/
 
-	$RemoteServer   = 'db';
-	$DataBase       = 'sagadegro';
-	$User           = 'root';
-	$Password       = 'root';
+	require_once __DIR__ . '/Functions.php';
+
+	$env = LoadEnv(dirname(__DIR__) . '/.env');
+
+	$RemoteServer = $env['DB_HOST'];
+	$DataBase     = $env['DB_NAME'];
+	$User         = $env['DB_USER'];
+	$Password     = $env['DB_PASSWORD'];
 
 	mysqli_report(MYSQLI_REPORT_STRICT);
 	try {
