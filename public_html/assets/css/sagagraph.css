@@ -1,0 +1,159 @@
+/* ============================================================
+   SagaGraph - Estilos
+   ============================================================ */
+
+.sg-container {
+  position: relative;
+  overflow: hidden;
+  background: #f8fafc;
+  border-radius: 12px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Nodos */
+.sg-node {
+  position: absolute;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.1);
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+  cursor: grab;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.sg-node:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.sg-node.sg-dragging {
+  cursor: grabbing;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+  z-index: 100 !important;
+}
+
+.sg-node.sg-selected {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.15);
+}
+
+/* Tooltip */
+.sg-tooltip {
+  position: absolute;
+  z-index: 200;
+  background: #0f172a;
+  color: white;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 12px;
+  min-width: 240px;
+  max-width: 320px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  font-family: system-ui, sans-serif;
+}
+
+.sg-tooltip.sg-tooltip-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.sg-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #0f172a;
+}
+
+/* Toolbar */
+.sg-toolbar {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.sg-toolbar .sg-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  font-size: 15px;
+  transition: background 0.15s ease;
+}
+
+.sg-toolbar .sg-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Info panel */
+.sg-info {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 50;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* Minimap */
+.sg-minimap {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  width: 160px;
+  height: 100px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  z-index: 40;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Animaciones */
+@keyframes sg-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.sg-pulse {
+  animation: sg-pulse 2s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sg-toolbar {
+    bottom: 10px;
+    right: 10px;
+  }
+  .sg-toolbar .sg-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+}
