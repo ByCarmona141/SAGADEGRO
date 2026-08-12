@@ -1,0 +1,50 @@
+services:
+  app:
+    build: ./docker/php
+    container_name: sagadegro_app
+    ports:
+      - "8085:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_started
+    networks:
+      - backend
+
+  db:
+    image: mariadb:11
+    container_name: sagadegro_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sagadegro
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 12
+    ports:
+      - "13306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sagadegro_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      db:
+        condition: service_started
+    networks:
+      - backend
+
+volumes:
+  db_data:
+
+networks:
+  backend:

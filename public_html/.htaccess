@@ -1,0 +1,25 @@
+<IfModule mod_rewrite.c>
+	#####################
+	## enable rewrites ##
+	#####################
+	Options +FollowSymlinks
+	RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME}.php -f
+	RewriteCond %{REQUEST_FILENAME} !-l
+	RewriteRule ^(.*)$ $1.php
+</IfModule>
+<IfModule mod_php5.c>
+	php_value post_max_size 30M
+	php_value max_input_vars 10000
+	php_value upload_max_filesize 30M
+	php_value max_execution_time 1800
+	php_value max_file_uploads 20
+	php_value memory_limit 512M
+	php_value max_input_time 1800
+</IfModule>
+php_flag display_errors on
+ErrorDocument 403 http://mspv.mx/PageForbidden
+ErrorDocument 404 http://mspv.mx/PageNotFound
+ErrorDocument 500 http://mspv.mx/PageServerError
+ErrorDocument 504 http://mspv.mx/PageTimeOut

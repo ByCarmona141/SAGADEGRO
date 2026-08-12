@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- Meta -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="eDocs - Documentation Template">
+	<meta name="author" content="erikathemes.com">
+	<!-- Favicon -->
+	<link rel="icon" href="assets/images/favicon.png">
+	<!-- Site Title -->
+	<title><?= $HostName; ?></title>
+	<!-- Bootstrap 5 Core CSS -->
+	<link href="https://erikathemes.com/demos/edocs/assets/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Custom Styles -->
+	<link rel="stylesheet" href="../public_html/assets/css/animate.min.css">
+	<link rel="stylesheet" href="../public_html/assets/css/aos.css">
+	<link rel="stylesheet" href="../public_html/assets/css/style.css">
+	<!-- Fonts -->
+	<link rel="stylesheet" href="../public_html/assets/css/fontawesome-all.min.css" type="text/css">
+</head>
+
+<body>
+
+<div id="loader-wrapper">
+	<div id="loader"></div>
+	<div class="loader-section section-left"></div>
+	<div class="loader-section section-right"></div>
+</div>
+
+<div class="main-container p-0">
+
+	<section id="features" class="xl bg-light">
+		<div class="container p-y-150 text-center">
+			<div class="row v-center col-4 ">
+				<form class="needs-validation" id="login-form3" novalidate="novalidate">
+					<div class="form-group">
+						<input type="text" class="form-control" name="usernameLogin" placeholder="Username or Email" required="">
+					</div><!-- / form-group -->
+
+					<div class="form-group mb-10">
+						<input type="password" class="form-control" name="passwordLogin" placeholder="Password" required="">
+					</div><!-- / form-group -->
+
+					<div class="mb-15">
+						<a href="index.html#x">Forgot Password?</a>
+					</div>
+
+					<div class="row v-center mt-20">
+						<div class="col-12 mb-25">
+							<div class="checkbox checkbox-primary ml-10">
+								<label class="hidden"><input type="checkbox"></label>
+								<input id="checkbox-login2" type="checkbox">
+								<label for="checkbox-login2"><span>Remember Me</span></label>
+							</div><!-- / checkbox -->
+						</div><!-- / column -->
+						<div class="col-12">
+							<button type="submit" class="btn btn-primary btn-block w-100">Sign In <i class="bi bi-arrow-right fs-14 ml-5 va-middle"></i> </button>
+						</div><!-- / column -->
+					</div><!-- / row -->
+				</form>
+			</div>
+		</div>
+	</section><!-- / sections -->
+</div><!-- / main-container -->
+
+<div class="footer-wrapper bg-primary dark">
+
+	<footer class="bg-transparent relative">
+		<div class="container">
+			<div class="row v-center mobile-center">
+				<div class="col-lg-4 tablet-lg-text-center tablet-lg-top-30">
+					<img src="assets/images/logo-white.png" class="footer-logo" alt="">
+				</div><!-- / footer-left-area -->
+				<div class="col-lg-4 footer-center-area text-center tablet-lg-top">
+					<a href="index.html#top" class="btn btn-lg btn-icon btn-white btn-circle btn-back-top"><i class="bi bi-chevron-up"></i></a>
+					<p>© <?= date('Y'); ?> <?= $HostName; ?> <a href="../../index.html" target="_blank"><?= $HostName; ?></a></p>
+				</div><!-- / footer-center-area -->
+			</div><!-- / row -->
+		</div><!-- / container -->
+	</footer>
+</div><!-- / footer-wrapper -->
+
+
+<!-- Core JavaScript -->
+<script src="../public_html/assets/js/bootstrap.bundle.min.js"></script>
+<script src="../public_html/assets/js/theme.js"></script>
+
+<!-- aos -->
+<script src="../public_html/assets/js/aos.js"></script>
+<script>
+	AOS.init({
+		duration: 1200,
+	})
+</script>
+<!-- / aos -->
+
+<!-- Jarallax -->
+<script src="../public_html/assets/js/jarallax.min.js"></script>
+<!-- / Jarallax -->
+
+</body>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title> <?= $HostName; ?> </title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- Basic Styles -->
+	<link rel="stylesheet" type="text/css" media="screen" href="landing/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="landing/css/font-awesome.min.css">
+
+	<!-- SmartAdmin Styles : Please note (smartadmin-production.css) was created using LESS variables -->
+	<link rel="stylesheet" type="text/css" media="screen" href="landing/css/smartadmin-production.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="landing/css/smartadmin-skins.css">
+
+	<!-- SmartAdmin RTL Support is under construction
+		<link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-rtl.css"> -->
+
+	<link rel="stylesheet" type="text/css" media="screen" href="landing/css/demo.css">
+
+	<!-- FAVICONS -->
+	<link rel="shortcut icon" href="<?= $SystemIcon; ?>" type="image/x-icon">
+	<link rel="icon" href="<?= $SystemIcon; ?>" type="image/x-icon">
+
+	<!-- GOOGLE FONT -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+	<style>
+		label.error {
+			font-weight: bold;
+			color: red;
+			padding: 2px 8px;
+			margin-top: 2px;
+		}
+	</style>
+</head>
+<body id="login" class="animated fadeInDown">
+<header id="header">
+	<div id="logo-group">
+				<span id="logo">
+					<img alt="<?= $HostName; ?>" src="<?= $SystemLogo; ?>">
+				</span>
+	</div>
+</header>
+<div id="main" role="main">
+	<div id="content" class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 hidden-xs hidden-sm">
+				<br />
+				<br />
+				<br />
+				<h1>
+					<img width="235px" class="pull-center display-image" src="<?= $SystemImage; ?>">
+				</h1>
+				<br />
+				<br />
+				<br />
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<br />
+						<br />
+						<hr />
+						<!--h4 class="about-heading">
+						<?= $HostName.": ".$SloganSystem; ?>
+					</h4-->
+						<h3 class="about-heading">AMBET Soluciones Itegrales S.A. de C.V.</h3>
+						<br />
+						<br />
+						<p>
+
+						</p>
+						<br />
+						<p>
+							<?php
+									include '../CelaTemplate/CelaFooter.php';
+								?>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+				<div class="well no-padding">
+					<form action="Accesar.php" id="form1" class="smart-form client-form form_validate" method="post">
+						<header>
+							Accesar/Login
+						</header>
+						<fieldset>
+							<section>
+								<?php
+										if(isset($_GET['CaptchaFail']) && $_GET['CaptchaFail']==1){
+											?>
+								<label class="error">El c&oacute;digo de acceso no coincide, vuelva a intentarlo</label>
+								<?php
+										}
+										if(isset($_GET['UserLock']) && $_GET['UserLock']==1){
+											?>
+								<label class="error">Este usuario se encuentra bloquedo, pongase en contacto con el administrador</label>
+								<?php
+										}
+										if(isset($_GET['LoginFail']) && $_GET['LoginFail']==1){
+											?>
+								<label class="error">Error al iniciar sesi&oacute;n, verifique el nombre de usuario y la contrase&ntilde;a</label>
+								<?php
+										}
+										if(isset($_GET['LogFail']) && $_GET['LogFail']==1){
+											?>
+								<label class="error">Error al registrar el log</label>
+								<?php
+										}
+									?>
+							</section>
+							<section>
+								<label class="label">Usuario</label>
+								<label class="input"> <i class="icon-append fa fa-user"></i>
+									<input type="text" name="txtusuario" id="txtusuario" class="e_requerido e_usuario">
+									<b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i>&nbsp; Ingrese su nombre de usuario</b></label>
+							</section>
+							<section>
+								<label class="label">Contrase&ntilde;a</label>
+								<label class="input"> <i class="icon-append fa fa-lock"></i>
+									<input type="password" name="txtcontrasena" id="txtcontrasena" class="e_requerido" autocomplete="off">
+									<b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i>&nbsp; Ingrese su contraseña</b>
+								</label>
+							</section>
+							<?php
+									if($captcha==1){
+										?>
+							<section>
+								<label class="label">Captcha</label>
+								<label class="input"> <i class="icon-append fa fa-chain-broken"></i>
+									<input type="text" name="txtcaptcha" id="txtcaptcha" class="e_requerido" autocomplete="off" maxlength="<?= $Length; ?>">
+									<b class="tooltip tooltip-top-right"><i class="fa fa-chain-broken txt-color-teal"></i>&nbsp; Ingrese el texto de la imagen</b> </label>
+							</section>
+							<div align="center">
+								<img class="img-polaroid" id="captcha" src="SecurImageShow.php?Length=<?= $Length; ?>" alt="Codigo de seguridad" width="200" height="80" />
+								<a class="text-center new-account" href="#" onclick="document.getElementById('captcha').src = 'SecurImageShow.php?Length=<?= $Length; ?>&' + Math.random(); return false"><br />[ Otra imagen ] / [ Different Image ]</a>
+							</div>
+							<?php
+									}
+								?>
+						</fieldset>
+						<footer>
+
+							<button type="submit" class="btn btn-primary">
+								Entrar
+							</button>
+						</footer>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php
+		include '../CelaTemplate/CelaJavascript.php';
+	?>
+<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local ->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script>
+	if(!window.jQuery){
+		document.write('<script src="landing/js/libs/jquery-2.0.2.min.js"><\/script>');
+	}
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+	if(!window.jQuery.ui){
+		document.write('<script src="landing/js/libs/jquery-ui-1.10.3.min.js"><\/script>');
+	}
+</script-->
+<!--[if IE 7]>
+<h1>
+	Your browser is out of date, please update your browser by going to www.microsoft.com/download
+</h1>
+<![endif]-->
+</body>
+</html>
