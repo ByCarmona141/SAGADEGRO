@@ -38,8 +38,8 @@
                         $Query              = TipoDispositivoQueryCombo();
 
                         $ContentTipoDispositivo = array(
-                                '<font color="red">*</font> Tipo de Dispositivo: ',
-                                SFillSelect($Query, $OpcTipoDispositivo, $DispositivoRecord['TipoDispositivo'])
+                            '<font color="red">*</font> Tipo de Dispositivo: ',
+                            SFillSelect($Query, $OpcTipoDispositivo, $DispositivoRecord['TipoDispositivo'])
                         );
 
                         print ReplaceContentPage($TagsToReplace, $ContentTipoDispositivo, $InputTemplate);
@@ -49,8 +49,8 @@
                         $Query              = DispositivoQueryCombo();
 
                         $ContentDispositivo = array(
-                                ' Dispositivo: ',
-                                SFillSelect($Query, $OpcDispositivo, $DispositivoRecord['Dispositivo'], 1)
+                            ' Dispositivo Padre: ',
+                            SFillSelect($Query, $OpcDispositivo, $DispositivoRecord['Dispositivo'], 1)
                         );
 
                         print ReplaceContentPage($TagsToReplace, $ContentDispositivo, $InputTemplate);
@@ -60,8 +60,8 @@
                         $Query              = ModeloQueryCombo();
 
                         $ContentModelo = array(
-                                ' <font color="red">*</font> Modelo: ',
-                                SFillSelect($Query, $OpcModelo, $DispositivoRecord['Modelo'])
+                            ' <font color="red">*</font> Modelo: ',
+                            SFillSelect($Query, $OpcModelo, $DispositivoRecord['Modelo'])
                         );
 
                         print ReplaceContentPage($TagsToReplace, $ContentModelo, $InputTemplate);
@@ -71,15 +71,15 @@
                         $Query              = EstatusQueryCombo();
 
                         $ContentEstatus = array(
-                                ' <font color="red">*</font> Estado Actual: ',
-                                SFillSelect($Query, $OpcEstatus, $DispositivoRecord['Status'])
+                            ' <font color="red">*</font> Estado Actual: ',
+                            SFillSelect($Query, $OpcEstatus, $DispositivoRecord['Status'])
                         );
 
                         print ReplaceContentPage($TagsToReplace, $ContentEstatus, $InputTemplate);
 
                         $ContentMAC = array(
-                                ' MAC:',
-                                '<input class="form-control focused" name="MAC' . $Key . '" id="MAC' . $Key . '" data-rango=\'{"minimo":"1", "maximo":"17", "mensaje":"Introduce un valor entre 1 y 17 caracteres de longitud"}\' type="text" value="' . $DispositivoRecord['MAC'] . '" />'
+                            ' MAC:',
+                            '<input class="form-control focused" name="MAC' . $Key . '" id="MAC' . $Key . '" data-rango=\'{"minimo":"1", "maximo":"17", "mensaje":"Introduce un valor entre 1 y 17 caracteres de longitud"}\' type="text" value="' . $DispositivoRecord['MAC'] . '" />'
                         );
                         print ReplaceContentPage($TagsToReplace, $ContentMAC, $InputTemplate);
 
@@ -88,8 +88,8 @@
                         $Query              = UbicacionQueryCombo();
 
                         $ContentUbicacion = array(
-                                ' <font color="red">*</font> Ubicacion del Dispositivo: ',
-                                SFillSelect($Query, $OpcUbicacion, $DispositivoRecord['Ubicacion'])
+                            ' <font color="red">*</font> Ubicacion del Dispositivo: ',
+                            SFillSelect($Query, $OpcUbicacion, $DispositivoRecord['Ubicacion'])
                         );
 
                         print ReplaceContentPage($TagsToReplace, $ContentUbicacion, $InputTemplate);
@@ -99,8 +99,8 @@
                         $Query              = RackQueryCombo();
 
                         $ContentRack = array(
-                                ' Rack (opcional): ',
-                                SFillSelect($Query, $OpcRack, $DispositivoRecord['Rack'], 1)
+                            ' Rack (opcional): ',
+                            SFillSelect($Query, $OpcRack, $DispositivoRecord['Rack'], 1)
                         );
 
                         print ReplaceContentPage($TagsToReplace, $ContentRack, $InputTemplate);

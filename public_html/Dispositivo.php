@@ -36,13 +36,13 @@ if(isset($_GET['Action'])) {
                     /*Se invoca la funcion crear*/
                     $Data = array(
                         'Nombre' => $_POST['Nombre'],
+                        'TipoDispositivo' => $_POST['TipoDispositivo'],
+                        'Dispositivo' => $_POST['Dispositivo'],
+                        'Modelo' => $_POST['Modelo'],
                         'Estatus' => $_POST['Estatus'],
                         'MAC' => strtoupper($_POST['MAC']),
-                        'Marca' => $_POST['Marca'],
-                        'Modelo' => $_POST['Modelo'],
                         'Ubicacion' => $_POST['Ubicacion'],
                         'Rack' => $_POST['Rack'],
-                        'TipoDispositivo' => $_POST['TipoDispositivo'],
                         'IP' => ($_POST['IP'] == '' || $_POST['IP'] == NULL) ? 'DHCP' : $_POST['IP'],
                         'Serial' => $_POST['Serial']
                     );
@@ -209,13 +209,13 @@ if(isset($_GET['Action'])) {
                             /*Se invoca la funcion actulizar*/
                             $Data = array(
                                 'Nombre' => $_POST['Nombre' . $Key],
+                                'TipoDispositivo' => $_POST['TipoDispositivo' . $Key],
+                                'Dispositivo' => $_POST['Dispositivo' . $Key],
+                                'Modelo' => $_POST['Modelo' . $Key],
                                 'Estatus' => $_POST['Estatus' . $Key],
                                 'MAC' => strtoupper($_POST['MAC' . $Key]),
-                                'Marca' => $_POST['Marca' . $Key],
-                                'Modelo' => $_POST['Modelo' . $Key],
                                 'Ubicacion' => $_POST['Ubicacion' . $Key],
                                 'Rack' => $_POST['Rack' . $Key],
-                                'TipoDispositivo' => $_POST['TipoDispositivo' . $Key],
                                 'IP' => ($_POST['IP' . $Key] == '' || $_POST['IP' . $Key] == NULL) ? 'DHCP' : $_POST['IP' . $Key],
                                 'Serial' => $_POST['Serial' . $Key]
                             );
@@ -303,6 +303,26 @@ if(isset($_GET['Action'])) {
                 }
             }
             break;
+        case 'Topologia':
+            /*Se carga la vista de lectura*/
+            if(isset($Privileges['Leer']) && $Privileges['Leer'] == 1) {
+                $ArgsCelaHeadContent['FormTitle'] = 'Topolog&iacute;a de Dispositivos';
+        
+                /*Se obtienen los dispositivos formateados para SagaGraph*/
+                $dispositivos = DispositivoTopologia();
+                
+                /*Argumentos para la vista de topología*/
+                $ArgsDispositivoVistaTopologia = array(
+                    'Dispositivos' => $dispositivos
+                );
+                
+                /*Se carga la vista de topología*/
+                $Content .= LoadContentPage('../Dispositivo/DispositivoTopologia.php', $ArgsDispositivoVistaTopologia);
+                
+                /*Se carga el CSS de SagaGraph en MYSTYLE*/
+                $MyStyles .= '<link rel="stylesheet" href="assets/css/sagagraph.css">' . "\n";
+            } 
+        break;
     }
 }else{
     /*Se carga la vista de lectura*/

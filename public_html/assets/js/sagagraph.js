@@ -518,11 +518,11 @@
         <div style="padding:10px 14px;border-top:1px solid #f1f5f9;display:flex;gap:8px;">
           <button class="sg-btn-acceso" style="flex:1;padding:7px 0;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#0f172a;color:white;transition:background 0.15s;"
             onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0f172a'">
-            🔑 Registrar acceso
+            <i class="fas fa-key"></i> Accesos
           </button>
           <button class="sg-btn-detalle" style="padding:7px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;transition:background 0.15s;"
             onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
-            👁️
+            <i class="fas fa-edit"></i>
           </button>
         </div>
       `;

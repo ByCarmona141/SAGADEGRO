@@ -47,14 +47,16 @@
 	function DispositivoLeer() {
 		global $Privileges;
 
+		$Table =  sprintf('(SELECT d.id, d.Nombre, d.MAC, m.Nombre AS Modelo, ma.Nombre AS Marca, u.Area AS Ubicacion, u.Piso, r.Nombre AS Rack, td.Nombre AS TipoDispositivo, d.IP, d.Serial, e.Nombre AS Estatus, padre.Nombre AS DispositivoPadre FROM Dispositivo d LEFT JOIN Modelo m ON d.Modelo = m.id LEFT JOIN Marca ma ON m.Marca = ma.id LEFT JOIN Ubicacion u ON d.Ubicacion = u.id LEFT JOIN Rack r ON d.Rack = r.id LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id LEFT JOIN CelaIcono ci ON td.Icono = ci.id LEFT JOIN Estatus e ON d.Estatus = e.id LEFT JOIN Dispositivo padre ON d.Dispositivo = padre.id)');
+
 		$ServerQuery = [
 			'Table'     => [
-				'TableName'  => 'Dispositivo',
-				'Alias' => ''
+				'TableName'  => $Table,
+				'Alias' => 'Dispositivo'
 			],
 			'Index'     => [
-				'IndexName' => 'id',
-				'Alias' => ''
+				'IndexName' => 'd.id',
+				'Alias' => 'id'
 			],
 			'Columns'   =>  [
 				[
@@ -73,36 +75,36 @@
 				],
                 [
                     'Type'      => 2,
-                    'ColumName' => '(SELECT Nombre FROM TipoDispositivo WHERE TipoDispositivo.id = Dispositivo.TipoDispositivo)',
-                    'Alias'     => 'TipoDispositivo',
+                    'ColumName' => 'TipoDispositivo',
+                    'Alias'     => '',
                     'Extra'     => '',
                     'Render'    => ''
                 ],
                 [
                     'Type'      => 2,
-                    'ColumName' => '(SELECT Nombre FROM Dispositivo WHERE Dispositivo.id = Dispositivo.Dispositivo)',
-                    'Alias'     => 'Dispositivo',
+                    'ColumName' => 'DispositivoPadre',
+                    'Alias'     => '',
                     'Extra'     => '',
                     'Render'    => ''
                 ],
                 [
                     'Type'      => 2,
-                    'ColumName' => '(SELECT (SELECT Nombre FROM Marca WHERE Marca.id = Modelo.Marca) AS Marca FROM Modelo WHERE Modelo.id = Dispositivo.Modelo)',
-                    'Alias'     => 'Marca',
+                    'ColumName' => 'Marca',
+                    'Alias'     => '',
                     'Extra'     => '',
                     'Render'    => ''
                 ],
                 [
                     'Type'      => 2,
-                    'ColumName' => '(SELECT Nombre FROM Modelo WHERE Modelo.id = Dispositivo.Modelo)',
-                    'Alias'     => 'Modelo',
+                    'ColumName' => 'Modelo',
+                    'Alias'     => '',
                     'Extra'     => '',
                     'Render'    => ''
                 ],
                 [
                     'Type'      => 2,
-                    'ColumName' => '(SELECT Nombre FROM Estatus WHERE Estatus.id = Dispositivo.Estatus)',
-                    'Alias'     => 'Estatus',
+                    'ColumName' => 'Estatus',
+                    'Alias'     => '',
                     'Extra'     => '',
                     'Render'    => ''
                 ],
@@ -115,15 +117,15 @@
 				],
 				[
 					'Type'      => 2,
-					'ColumName' => '(SELECT Area FROM Ubicacion WHERE Ubicacion.id = Dispositivo.Ubicacion)',
-					'Alias'     => 'Ubicacion',
+					'ColumName' => 'Ubicacion',
+					'Alias'     => '',
 					'Extra'     => '',
 					'Render'    => ''
 				],
 				[
 					'Type'      => 2,
-					'ColumName' => '(SELECT Nombre FROM Rack WHERE Rack.id = Dispositivo.Rack)',
-					'Alias'     => 'Rack',
+					'ColumName' => 'Rack',
+					'Alias'     => '',
 					'Extra'     => '',
 					'Render'    => ''
 				],
@@ -154,7 +156,7 @@
 			'Order'         => ' id ASC ',
 			'RenderRow'     => '',
 			'Privileges'    => $Privileges,
-			'Debug'         => 0
+			'Debug'         => 1
         ];
 
 		return $ServerQuery;
@@ -197,5 +199,164 @@
 		}
 
 		return $Query;
+	}
+
+	/* ============================================================
+	   FUNCIONES PARA SAGAGRAPH — Topología de Dispositivos
+	   ============================================================ */
+
+	/**
+	 * DispositivoTopologia
+	 * Obtiene todos los dispositivos formateados para la librería SagaGraph.
+	 * Incluye joins a TipoDispositivo, Ubicacion y Estatus.
+	 *
+	 * @return array  Arreglo de dispositivos listos para JSON/SagaGraph
+	 */
+	function DispositivoTopologia() {
+		global $Connection;
+
+		$Query  = 'SELECT 
+						d.id,
+						d.Nombre AS name,
+						d.IP AS ip,
+						d.MAC AS mac,
+						e.Nombre AS status_raw,
+						td.Nombre AS tipo_raw,
+						u.Area AS location,
+						d.Dispositivo AS parentId
+					FROM Dispositivo d
+					LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
+					LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
+					LEFT JOIN Estatus e          ON d.Estatus        = e.id
+					ORDER BY d.Dispositivo IS NULL DESC, d.id ASC';
+
+		$Result = $Connection->query($Query);
+		$Devices = array();
+
+		if ($Result) {
+			while ($Row = $Result->fetch_assoc()) {
+				$Devices[] = DispositivoFormatearSagaGraph($Row);
+			}
+		}
+
+		return $Devices;
+	}
+
+	/**
+	 * DispositivoFormatearSagaGraph
+	 * Mapea un registro de la BD al formato que espera SagaGraph.
+	 *
+	 * @param array $Row  Fila de la consulta SQL
+	 * @return array
+	 */
+	function DispositivoFormatearSagaGraph($Row) {
+		$tipoMap = array(
+			'Modem'        => 'modem',
+			'Cámara'       => 'camera',
+			'Camara'       => 'camera',
+			'Router'       => 'router',
+			'Access Point' => 'ap',
+			'AccessPoint'  => 'ap',
+			'AP'           => 'ap',
+			'Switch'       => 'switch',
+			'Firewall'     => 'firewall',
+			'Servidor'     => 'server',
+			'Server'       => 'server',
+			'Otro'         => 'other',
+		);
+
+		$tipoRaw   = isset($Row['tipo_raw']) ? trim($Row['tipo_raw']) : 'Otro';
+		$tipoSaga  = isset($tipoMap[$tipoRaw]) ? $tipoMap[$tipoRaw] : 'other';
+
+		$estadoRaw = isset($Row['status_raw']) ? strtolower(trim($Row['status_raw'])) : '';
+		$estado    = ($estadoRaw === 'activo') ? 'active' : 'inactive';
+
+		return array(
+			'id'       => (int) $Row['id'],
+			'name'     => $Row['name'],
+			'type'     => $tipoSaga,
+			'status'   => $estado,
+			'ip'       => !empty($Row['ip'])     ? $Row['ip']     : 'N/A',
+			'mac'      => !empty($Row['mac'])    ? $Row['mac']    : 'N/A',
+			'location' => !empty($Row['location'])? $Row['location']: 'Sin ubicación',
+			'parentId' => ($Row['parentId'] !== NULL) ? (int) $Row['parentId'] : NULL,
+		);
+	}
+
+	/**
+	 * DispositivoObtenerPorId
+	 * Obtiene un dispositivo por su ID, formateado para SagaGraph.
+	 *
+	 * @param int $Key  ID del dispositivo
+	 * @return array|null
+	 */
+	function DispositivoObtenerPorId($Key) {
+		global $Connection;
+
+		$Query = sprintf(
+			'SELECT 
+				d.id,
+				d.Nombre AS name,
+				d.IP AS ip,
+				d.MAC AS mac,
+				e.Nombre AS status_raw,
+				td.Nombre AS tipo_raw,
+				u.Area AS location,
+				d.Dispositivo AS parentId
+			FROM Dispositivo d
+			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
+			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
+			LEFT JOIN Estatus e          ON d.Estatus        = e.id
+			WHERE d.id = %s
+			LIMIT 1',
+			GetSQLValueString($Key, 'int')
+		);
+
+		$Result = $Connection->query($Query);
+		if ($Result && $Result->num_rows > 0) {
+			return DispositivoFormatearSagaGraph($Result->fetch_assoc());
+		}
+		return NULL;
+	}
+
+	/**
+	 * DispositivoObtenerHijos
+	 * Obtiene los dispositivos hijos de un dispositivo padre.
+	 *
+	 * @param int $Key  ID del dispositivo padre
+	 * @return array
+	 */
+	function DispositivoObtenerHijos($Key) {
+		global $Connection;
+
+		$Query = sprintf(
+			'SELECT 
+				d.id,
+				d.Nombre AS name,
+				d.IP AS ip,
+				d.MAC AS mac,
+				e.Nombre AS status_raw,
+				td.Nombre AS tipo_raw,
+				u.Area AS location,
+				d.Dispositivo AS parentId
+			FROM Dispositivo d
+			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
+			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
+			LEFT JOIN Estatus e          ON d.Estatus        = e.id
+			WHERE d.Dispositivo = %s
+			ORDER BY d.id ASC',
+			GetSQLValueString($Key, 'int')
+		);
+
+		$Result = $Connection->query($Query);
+		$Devices = array();
+
+		if ($Result) {
+			while ($Row = $Result->fetch_assoc()) {
+				$Devices[] = DispositivoFormatearSagaGraph($Row);
+			}
+		}
+
+		return $Devices;
 	}
 ?>
