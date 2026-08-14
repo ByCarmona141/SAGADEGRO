@@ -35,6 +35,7 @@
 
                         $OpcTipoDispositivo['Name']  = 'TipoDispositivo' . $Key;
                         $OpcTipoDispositivo['Class'] = 'form-control e_requerido';
+                        $OpcTipoDispositivo['Custom'] = 'data-live-search="true"';
                         $Query              = TipoDispositivoQueryCombo();
 
                         $ContentTipoDispositivo = array(
@@ -46,6 +47,7 @@
 
                         $OpcDispositivo['Name']  = 'Dispositivo' . $Key;
                         $OpcDispositivo['Class'] = 'form-control ';
+                        $OpcDispositivo['Custom'] = 'data-live-search="true"';
                         $Query              = DispositivoQueryCombo();
 
                         $ContentDispositivo = array(
@@ -57,6 +59,7 @@
 
                         $OpcModelo['Name']  = 'Modelo' . $Key;
                         $OpcModelo['Class'] = 'form-control e_requerido';
+                        $OpcModelo['Custom'] = 'data-live-search="true"';
                         $Query              = ModeloQueryCombo();
 
                         $ContentModelo = array(
@@ -85,6 +88,7 @@
 
                         $OpcUbicacion['Name']  = 'Ubicacion' . $Key;
                         $OpcUbicacion['Class'] = 'form-control e_requerido';
+                        $OpcUbicacion['Custom'] = 'data-live-search="true"';
                         $Query              = UbicacionQueryCombo();
 
                         $ContentUbicacion = array(

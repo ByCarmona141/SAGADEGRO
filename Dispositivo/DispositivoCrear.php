@@ -33,7 +33,7 @@
         $Query = DispositivoQueryCombo();
 
         $ContentDispositivo = array(
-            ' Dispositivo:',
+            ' Dispositivo Padre:',
             FillSelect($Query, $OpcDispositivo, 1)
         );
         print ReplaceContentPage($TagsToReplace, $ContentDispositivo, $InputsTemplate);

@@ -21,16 +21,26 @@ $TagsToReplace = array(
         );
         print ReplaceContentPage($TagsToReplace, $ContentTipoAcceso, $InputsTemplate);
 
-        $OpcDispositivo['Name']     = 'Dispositivo';
-        $OpcDispositivo['Class']    = 'form-control focused e_requerido';
-        $OpcDispositivo['Custom'] = 'data-live-search="true"';
-        $Query = DispositivoQueryCombo();
+        global $Dispositivo;
 
-        $ContentDispositivo = array(
-                '<font color="red">*</font> Dispositivo:',
-                FillSelect($Query, $OpcDispositivo, 1)
-        );
-        print ReplaceContentPage($TagsToReplace, $ContentDispositivo, $InputsTemplate);
+        if ($Dispositivo === NULL) {
+                $OpcDispositivo['Name']     = 'Dispositivo';
+                $OpcDispositivo['Class']    = 'form-control focused e_requerido';
+                $OpcDispositivo['Custom'] = 'data-live-search="true"';
+                $Query = DispositivoQueryCombo();
+
+                $ContentDispositivo = array(
+                        '<font color="red">*</font> Dispositivo:',
+                        FillSelect($Query, $OpcDispositivo, 1)
+                );
+                print ReplaceContentPage($TagsToReplace, $ContentDispositivo, $InputsTemplate);
+        } else {
+                $ContenDispositivo = array(
+                        '',
+                        '<input type="hidden" name="Dispositivo" id="Dispositivo" value="' . $Dispositivo . '" />'
+                );
+                print ReplaceContentPage($TagsToReplace, $ContenDispositivo, $InputsTemplate);
+        }
 
         $ContenHost = array(
                 '<font color="red">*</font>Host: ',

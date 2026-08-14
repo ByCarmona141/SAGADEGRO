@@ -28,6 +28,14 @@ if(isset($_GET['Action'])) {
             if(isset($Privileges['Crear']) && $Privileges['Crear'] == 1) {
                 $ArgsCelaHeadContent['FormTitle'] = 'Creaci&oacute;n de Acceso';
 
+                $Dispositivo = NULL;
+
+                if (!empty($_GET['Dispositivo'])) {
+                    $Dispositivo = $_GET['Dispositivo'];
+                } else {
+                    $Dispositivo = $_POST['Dispositivo'];
+                }
+
                 /*Se verifica que haya evento "submit"*/
                 if((isset($_POST['AccesoInsert'])) && ($_POST['AccesoInsert'] == 'AccesoInsert')) {
                     /*Se invoca la funcion crear*/
@@ -37,7 +45,7 @@ if(isset($_GET['Action'])) {
                         'Puerto' => $_POST['Puerto'],
                         'Usuario' => $_POST['Usuario'],
                         'Password' => $_POST['Password'],
-                        'Dispositivo' => $_POST['Dispositivo']
+                        'Dispositivo' => $Dispositivo
                     );
                     $Acceso = AccesoCrear($Data);
 
