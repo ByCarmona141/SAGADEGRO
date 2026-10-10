@@ -1,4 +1,10 @@
 <?php
+// Archivo: Dispositivo/DispositivoCrear.php
+// Descripción: Archivo que contiene el formulario para crear un dispositivo
+// Autor: M. Carlos Alvarez Carmona
+// Fecha: 2026-10-10
+// Versión: 1.0.0
+
 	$InputsTemplate = LoadTemplatePage('../CelaTemplate/InputsTemplate.php');
 	$TagsToReplace = array(
 		'<!--#INPUTLABEL#-->',
@@ -27,13 +33,13 @@
         );
         print ReplaceContentPage($TagsToReplace, $ContentTipoDispositivo, $InputsTemplate);
 
-        $OpcDispositivo['Name']     = 'Dispositivo';
+        $OpcDispositivo['Name']     = 'Dispositivo[]';
         $OpcDispositivo['Class']    = 'form-control focused';
-        $OpcDispositivo['Custom'] = 'data-live-search="true"';
+        $OpcDispositivo['Custom'] = 'data-live-search="true" multiple data-actions-box="true" title="Dispositivos padre (ninguno, uno o varios)"';
         $Query = DispositivoQueryCombo();
 
         $ContentDispositivo = array(
-            ' Dispositivo Padre:',
+            ' Dispositivos Padre:',
             FillSelect($Query, $OpcDispositivo, 1)
         );
         print ReplaceContentPage($TagsToReplace, $ContentDispositivo, $InputsTemplate);

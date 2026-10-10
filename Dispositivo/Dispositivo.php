@@ -1,53 +1,119 @@
 <?php
+// Archivo: Dispositivo/Dispositivo.php
+// Descripción: Archivo que contiene las funciones para la gestión de dispositivos
+// Autor: M. Carlos Alvarez Carmona
+// Fecha: 2026-10-10
+// Versión: 1.0.0
+
+// Función para crear un dispositivo
 	function DispositivoCrear($FormData){
-		global $Connection;
-		$InsertQuery =  sprintf('INSERT INTO Dispositivo
-									( `id`, `Nombre`, Dispositivo, `MAC`, `Modelo`, `Ubicacion`, `Rack`, `TipoDispositivo`, `IP`, `Serial`, `Estatus` )
-								 VALUES
-								    (  %s,  %s, %s,  %s,  %s,  %s,  %s,  %s,  %s,  %s,  %s );',
-							GetSQLValueString(NULL, 'int'), 
-							GetSQLValueString($FormData['Nombre'], 'varchar'),
-							GetSQLValueString($FormData['Dispositivo'], 'int'),
-							GetSQLValueString($FormData['MAC'], 'varchar'),
-							GetSQLValueString($FormData['Modelo'], 'int'),
-							GetSQLValueString($FormData['Ubicacion'], 'int'),
-							GetSQLValueString($FormData['Rack'], 'int'),
-							GetSQLValueString($FormData['TipoDispositivo'], 'int'),
-							GetSQLValueString($FormData['IP'], 'varchar'),
-							GetSQLValueString($FormData['Serial'], 'varchar'),
-							GetSQLValueString($FormData['Estatus'], 'int')
-						);
-		if($InsertResult = $Connection -> query($InsertQuery)){
-			$idRecordDispositivo    = $Connection -> insert_id;
-			$Data['Status']           = 'OK';
-			$Data['idRecord']         = $idRecordDispositivo;
-		}else{
-			$Data['Status']         = 'ERROR';
-			$Data['Error']          = $Connection -> error;
+	global $Connection;
+	$InsertQuery =  sprintf('INSERT INTO Dispositivo
+				( `id`, `Nombre`, `MAC`, `Modelo`, `Ubicacion`, `Rack`, `TipoDispositivo`, `IP`, `Serial`, `Estatus` )
+				 VALUES
+				    (  %s,  %s,  %s,  %s,  %s,  %s,  %s,  %s,  %s,  %s );',
+			GetSQLValueString(NULL, 'int'),
+			GetSQLValueString($FormData['Nombre'], 'varchar'),
+			GetSQLValueString($FormData['MAC'], 'varchar'),
+			GetSQLValueString($FormData['Modelo'], 'int'),
+			GetSQLValueString($FormData['Ubicacion'], 'int'),
+			GetSQLValueString($FormData['Rack'], 'int'),
+			GetSQLValueString($FormData['TipoDispositivo'], 'int'),
+			GetSQLValueString($FormData['IP'], 'varchar'),
+			GetSQLValueString($FormData['Serial'], 'varchar'),
+			GetSQLValueString($FormData['Estatus'], 'int')
+		);
+	if($InsertResult = $Connection -> query($InsertQuery)){
+		$idRecordDispositivo    = $Connection -> insert_id;
+
+		/*Se guardan los dispositivos padre (relacion muchos a muchos)*/
+		DispositivoPadreGuardar($idRecordDispositivo, isset($FormData['Dispositivo']) ? $FormData['Dispositivo'] : array());
+
+		$Data['Status']           = 'OK';
+		$Data['idRecord']         = $idRecordDispositivo;
+	}else{
+		$Data['Status']         = 'ERROR';
+		$Data['Error']          = $Connection -> error;
+	}
+
+	return $Data;
+	}
+
+	function DispositivoPadreGuardar($DispositivoId, $Padres){
+	global $Connection;
+
+	/*Se eliminan las relaciones de padres anteriores del dispositivo*/
+	$DeleteQuery = sprintf('DELETE FROM DispositivoPadre WHERE `Dispositivo` = %s;',
+			GetSQLValueString($DispositivoId, 'int')
+		);
+	$Connection -> query($DeleteQuery);
+
+	if(!is_array($Padres)){
+		return;
+	}
+
+	/*Se insertan las nuevas relaciones con los dispositivos padre*/
+	foreach($Padres as $PadreId){
+		$PadreId = (int) $PadreId;
+
+		/*No se permiten valores vacios ni ser padre de si mismo*/
+		if($PadreId <= 0 || $PadreId === (int) $DispositivoId){
+			continue;
 		}
 
-		return $Data;
+		$InsertQuery = sprintf('INSERT IGNORE INTO DispositivoPadre ( `Dispositivo`, `Padre` ) VALUES ( %s, %s );',
+				GetSQLValueString($DispositivoId, 'int'),
+				GetSQLValueString($PadreId, 'int')
+			);
+		$Connection -> query($InsertQuery);
+	}
+	}
+
+	function DispositivoObtenerPadres($Key) {
+	global $Connection;
+
+	$Padres = array();
+	$Query = sprintf('SELECT `Padre` FROM DispositivoPadre WHERE `Dispositivo` = %s ORDER BY `Padre` ASC;',
+			GetSQLValueString($Key, 'int')
+		);
+
+	if($Result = $Connection -> query($Query)){
+		while($Row = $Result -> fetch_assoc()){
+			$Padres[] = (int) $Row['Padre'];
+		}
+	}
+
+	return $Padres;
 	}
 
 	function DispositivoEliminar($Key){
-		global $Connection;
-		$ConsultaElimina =  sprintf('DELETE FROM Dispositivo WHERE `id` = %s;',
-								GetSQLValueString($Key, 'tinyint unsigned')
-							);
-		if($ResultadoElimina = $Connection -> query($ConsultaElimina)){
-			$Data['Status'] = 'OK';
-		}else{
-			$Data['Status'] = 'ERROR';
-			$Data['Error']  = $Connection -> error;
-		}
+	global $Connection;
 
-		return $Data;
+	/*Se eliminan las relaciones de jerarquia donde participa el dispositivo*/
+	$Connection -> query(sprintf('DELETE FROM DispositivoPadre WHERE `Dispositivo` = %s OR `Padre` = %s;',
+			GetSQLValueString($Key, 'int'),
+			GetSQLValueString($Key, 'int')
+		));
+
+	$ConsultaElimina =  sprintf('DELETE FROM Dispositivo WHERE `id` = %s;',
+			GetSQLValueString($Key, 'tinyint unsigned')
+		);
+	if($ResultadoElimina = $Connection -> query($ConsultaElimina)){
+		$Data['Status'] = 'OK';
+	}else{
+		$Data['Status'] = 'ERROR';
+		$Data['Error']  = $Connection -> error;
 	}
+
+	return $Data;
+	}
+
+// Función para crear un dispositivo
 
 	function DispositivoLeer() {
 		global $Privileges;
 
-		$Table =  sprintf('(SELECT d.id, d.Nombre, d.MAC, m.Nombre AS Modelo, ma.Nombre AS Marca, u.Area AS Ubicacion, u.Piso, r.Nombre AS Rack, td.Nombre AS TipoDispositivo, d.IP, d.Serial, e.Nombre AS Estatus, padre.Nombre AS DispositivoPadre FROM Dispositivo d LEFT JOIN Modelo m ON d.Modelo = m.id LEFT JOIN Marca ma ON m.Marca = ma.id LEFT JOIN Ubicacion u ON d.Ubicacion = u.id LEFT JOIN Rack r ON d.Rack = r.id LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id LEFT JOIN CelaIcono ci ON td.Icono = ci.id LEFT JOIN Estatus e ON d.Estatus = e.id LEFT JOIN Dispositivo padre ON d.Dispositivo = padre.id)');
+		$Table =  sprintf('(SELECT d.id, d.Nombre, d.MAC, m.Nombre AS Modelo, ma.Nombre AS Marca, u.Area AS Ubicacion, u.Piso, r.Nombre AS Rack, td.Nombre AS TipoDispositivo, d.IP, d.Serial, e.Nombre AS Estatus, padres.DispositivosPadre FROM Dispositivo d LEFT JOIN Modelo m ON d.Modelo = m.id LEFT JOIN Marca ma ON m.Marca = ma.id LEFT JOIN Ubicacion u ON d.Ubicacion = u.id LEFT JOIN Rack r ON d.Rack = r.id LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id LEFT JOIN CelaIcono ci ON td.Icono = ci.id LEFT JOIN Estatus e ON d.Estatus = e.id LEFT JOIN (SELECT dp.Dispositivo, GROUP_CONCAT(p.Nombre ORDER BY p.Nombre SEPARATOR ", ") AS DispositivosPadre FROM DispositivoPadre dp INNER JOIN Dispositivo p ON p.id = dp.Padre GROUP BY dp.Dispositivo) padres ON padres.Dispositivo = d.id)');
 
 		$ServerQuery = [
 			'Table'     => [
@@ -82,7 +148,7 @@
                 ],
                 [
                     'Type'      => 2,
-                    'ColumName' => 'DispositivoPadre',
+                    'ColumName' => 'DispositivosPadre',
                     'Alias'     => '',
                     'Extra'     => '',
                     'Render'    => ''
@@ -163,32 +229,34 @@
 	}
 
 	function DispositivoActualizar($Key, $FormData) {
-		global $Connection;
+	global $Connection;
 
-		$UpdateQuery =  sprintf('UPDATE Dispositivo
-								SET `Nombre` = %s, `Dispositivo` = %s, `MAC` = %s, `Modelo` = %s, `Ubicacion` = %s, `Rack` = %s, `TipoDispositivo` = %s, `IP` = %s, `Serial` = %s, `Estatus` = %s
-								WHERE `id` = %s;',
-							GetSQLValueString($FormData['Nombre'], 'varchar'),
-							GetSQLValueString($FormData['Dispositivo'], 'int'),
-							GetSQLValueString($FormData['MAC'], 'varchar'),
-							GetSQLValueString($FormData['Modelo'], 'varchar'),
-							GetSQLValueString($FormData['Ubicacion'], 'int'),
-							GetSQLValueString($FormData['Rack'], 'int'),
-							GetSQLValueString($FormData['TipoDispositivo'], 'int'),
-							GetSQLValueString($FormData['IP'], 'varchar'),
-							GetSQLValueString($FormData['Serial'], 'varchar'),
-							GetSQLValueString($FormData['Estatus'], 'int'),
-							GetSQLValueString($Key, 'tinyint unsigned')
-						);
+	$UpdateQuery =  sprintf('UPDATE Dispositivo
+				SET `Nombre` = %s, `MAC` = %s, `Modelo` = %s, `Ubicacion` = %s, `Rack` = %s, `TipoDispositivo` = %s, `IP` = %s, `Serial` = %s, `Estatus` = %s
+				WHERE `id` = %s;',
+			GetSQLValueString($FormData['Nombre'], 'varchar'),
+			GetSQLValueString($FormData['MAC'], 'varchar'),
+			GetSQLValueString($FormData['Modelo'], 'varchar'),
+			GetSQLValueString($FormData['Ubicacion'], 'int'),
+			GetSQLValueString($FormData['Rack'], 'int'),
+			GetSQLValueString($FormData['TipoDispositivo'], 'int'),
+			GetSQLValueString($FormData['IP'], 'varchar'),
+			GetSQLValueString($FormData['Serial'], 'varchar'),
+			GetSQLValueString($FormData['Estatus'], 'int'),
+			GetSQLValueString($Key, 'tinyint unsigned')
+		);
 
-		if($UpdateResult = $Connection -> query($UpdateQuery)) {
-			$Data['Status'] = 'OK';
-		} else {
-			$Data['Status'] = 'ERROR';
-			$Data['Error']  = $Connection -> error;
-		}
+	if($UpdateResult = $Connection -> query($UpdateQuery)) {
+		/*Se guardan los dispositivos padre (relacion muchos a muchos)*/
+		DispositivoPadreGuardar($Key, isset($FormData['Dispositivo']) ? $FormData['Dispositivo'] : array());
 
-		return $Data;
+		$Data['Status'] = 'OK';
+	} else {
+		$Data['Status'] = 'ERROR';
+		$Data['Error']  = $Connection -> error;
+	}
+
+	return $Data;
 	}
 
 	function DispositivoQueryCombo($InText = false) {
@@ -213,33 +281,33 @@
 	 * @return array  Arreglo de dispositivos listos para JSON/SagaGraph
 	 */
 	function DispositivoTopologia() {
-		global $Connection;
+	global $Connection;
 
-		$Query  = 'SELECT 
-						d.id,
-						d.Nombre AS name,
-						d.IP AS ip,
-						d.MAC AS mac,
-						e.Nombre AS status_raw,
-						td.Nombre AS tipo_raw,
-						u.Area AS location,
-						d.Dispositivo AS parentId
-					FROM Dispositivo d
-					LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
-					LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
-					LEFT JOIN Estatus e          ON d.Estatus        = e.id
-					ORDER BY d.Dispositivo IS NULL DESC, d.id ASC';
+	$Query  = 'SELECT
+				d.id,
+				d.Nombre AS name,
+				d.IP AS ip,
+				d.MAC AS mac,
+				e.Nombre AS status_raw,
+				td.Nombre AS tipo_raw,
+				u.Area AS location,
+				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw
+			FROM Dispositivo d
+			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
+			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
+			LEFT JOIN Estatus e          ON d.Estatus        = e.id
+			ORDER BY d.id ASC';
 
-		$Result = $Connection->query($Query);
-		$Devices = array();
+	$Result = $Connection->query($Query);
+	$Devices = array();
 
-		if ($Result) {
-			while ($Row = $Result->fetch_assoc()) {
-				$Devices[] = DispositivoFormatearSagaGraph($Row);
-			}
+	if ($Result) {
+		while ($Row = $Result->fetch_assoc()) {
+			$Devices[] = DispositivoFormatearSagaGraph($Row);
 		}
+	}
 
-		return $Devices;
+	return $Devices;
 	}
 
 	/**
@@ -271,15 +339,23 @@
 		$estadoRaw = isset($Row['status_raw']) ? strtolower(trim($Row['status_raw'])) : '';
 		$estado    = ($estadoRaw === 'activo') ? 'active' : 'inactive';
 
+		$parents = array();
+		if(!empty($Row['parents_raw'])){
+			foreach(explode(',', $Row['parents_raw']) as $ParentId){
+				$parents[] = (int) $ParentId;
+			}
+		}
+
 		return array(
 			'id'       => (int) $Row['id'],
+			'parents'  => $parents,
 			'name'     => $Row['name'],
 			'type'     => $tipoSaga,
 			'status'   => $estado,
 			'ip'       => !empty($Row['ip'])     ? $Row['ip']     : 'N/A',
 			'mac'      => !empty($Row['mac'])    ? $Row['mac']    : 'N/A',
 			'location' => !empty($Row['location'])? $Row['location']: 'Sin ubicación',
-			'parentId' => ($Row['parentId'] !== NULL) ? (int) $Row['parentId'] : NULL,
+			'parentId' => count($parents) ? $parents[0] : NULL, /*Compatibilidad: primer padre*/
 		);
 	}
 
@@ -302,7 +378,7 @@
 				e.Nombre AS status_raw,
 				td.Nombre AS tipo_raw,
 				u.Area AS location,
-				d.Dispositivo AS parentId
+				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw
 			FROM Dispositivo d
 			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
 			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
@@ -338,12 +414,12 @@
 				e.Nombre AS status_raw,
 				td.Nombre AS tipo_raw,
 				u.Area AS location,
-				d.Dispositivo AS parentId
+				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw
 			FROM Dispositivo d
 			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
 			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
 			LEFT JOIN Estatus e          ON d.Estatus        = e.id
-			WHERE d.Dispositivo = %s
+			WHERE EXISTS (SELECT 1 FROM DispositivoPadre dp WHERE dp.Padre = %s AND dp.Dispositivo = d.id)
 			ORDER BY d.id ASC',
 			GetSQLValueString($Key, 'int')
 		);

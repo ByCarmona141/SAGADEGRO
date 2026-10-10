@@ -1,3 +1,10 @@
+<?php
+// Archivo: Dispositivo/DispositivoLeer.php
+// Descripción: Archivo que contiene la vista para leer un dispositivo
+// Autor: M. Carlos Alvarez Carmona
+// Fecha: 2026-10-10
+// Versión: 1.0.0
+?>
 <div class="row col-md-12">
 	<div class="col-md-2 text-left">
 		<?php
@@ -115,7 +122,7 @@
 		</th>
 		<th width="30%" class="sortable" ><div class="text-center"> Nombre </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Tipo de Dispositivo </div></th>
-		<th width="30%" class="sortable" ><div class="text-center"> Dispositivo Padre </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Dispositivos Padre </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Marca </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Modelo </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Estatus del Dispositivo </div></th>

@@ -1,3 +1,10 @@
+<?php
+// Archivo: Dispositivo/DispositivoTopologia.php
+// Descripción: Archivo que contiene la vista para la topología de dispositivos
+// Autor: M. Carlos Alvarez Carmona
+// Fecha: 2026-10-10
+// Versión: 1.0.0
+?>
 <div class="row col-md-12 mb-3">
 	<div class="col-md-2 text-left">
 		<?php

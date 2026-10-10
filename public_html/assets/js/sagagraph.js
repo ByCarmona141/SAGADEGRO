@@ -324,18 +324,25 @@
       return this;
     }
 
+    _getParents(device) {
+      if (Array.isArray(device.parents)) return device.parents.filter(p => p !== null && p !== undefined);
+      return device.parentId ? [device.parentId] : [];
+    }
+
     _buildEdges() {
       this.edges = [];
       const deviceMap = new Map(this.devices.map(d => [d.id, d]));
       this.devices.forEach(device => {
-        if (device.parentId && deviceMap.has(device.parentId)) {
-          this.edges.push({
-            from: device.parentId,
-            to: device.id,
-            source: deviceMap.get(device.parentId),
-            target: device
-          });
-        }
+        this._getParents(device).forEach(pid => {
+          if (deviceMap.has(pid)) {
+            this.edges.push({
+              from: pid,
+              to: device.id,
+              source: deviceMap.get(pid),
+              target: device
+            });
+          }
+        });
       });
     }
 
@@ -402,16 +409,19 @@
       });
       const roots = [];
       this.devices.forEach(d => {
-        if (d.parentId && map.has(d.parentId)) {
-          map.get(d.parentId).children.push(map.get(d.id));
-        } else {
+        const parents = this._getParents(d).filter(pid => map.has(pid));
+        if (parents.length === 0) {
           roots.push(map.get(d.id));
+        } else {
+          parents.forEach(pid => map.get(pid).children.push(map.get(d.id)));
         }
       });
       return { map, roots };
     }
 
-    _layoutNode(node, x, y) {
+    _layoutNode(node, x, y, visited = new Set()) {
+      if (visited.has(node.id)) return { width: this.options.nodeWidth };
+      visited.add(node.id);
       let pos = this.nodePositions.get(node.id);
       if (!pos) {
         pos = { x, y, fixed: false };
@@ -436,7 +446,7 @@
 
       let cx = x - totalWidth / 2;
       node.children.forEach((child, i) => {
-        this._layoutNode(child, cx + childWidths[i] / 2, y + this.options.nodeHeight + this.options.gapY);
+        this._layoutNode(child, cx + childWidths[i] / 2, y + this.options.nodeHeight + this.options.gapY, visited);
         cx += childWidths[i] + this.options.gapX;
       });
 
@@ -766,18 +776,30 @@
 
     _isNodeRelated(nodeId, highlightId) {
       if (nodeId === highlightId) return true;
-      // Verificar si es ancestro
-      const device = this.devices.find(d => d.id === nodeId);
-      if (device && device.parentId === highlightId) return true;
-      // Verificar si es descendiente directo
-      const highlighted = this.devices.find(d => d.id === highlightId);
-      if (highlighted && highlighted.parentId === nodeId) return true;
-      // Verificar cadena de ancestros
-      let curr = device;
-      while (curr && curr.parentId) {
-        if (curr.parentId === highlightId) return true;
-        curr = this.devices.find(d => d.id === curr.parentId);
-      }
+
+      const ascendentesDe = (startId) => {
+        const encontrados = new Set();
+        const visitados = new Set();
+        let curr = this.devices.find(d => d.id === startId);
+        while (curr) {
+          if (visitados.has(curr.id)) break; // proteccion contra ciclos
+          visitados.add(curr.id);
+          this._getParents(curr).forEach(pid => {
+            if (!encontrados.has(pid)) {
+              encontrados.add(pid);
+            }
+          });
+          const siguiente = this._getParents(curr).find(pid => this.devices.some(d => d.id === pid));
+          if (siguiente === undefined) break;
+          curr = this.devices.find(d => d.id === siguiente);
+        }
+        return encontrados;
+      };
+
+      // highlightId es ancestro de nodeId
+      if (ascendentesDe(nodeId).has(highlightId)) return true;
+      // nodeId es ancestro de highlightId
+      if (ascendentesDe(highlightId).has(nodeId)) return true;
       return false;
     }
 

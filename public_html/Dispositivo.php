@@ -1,4 +1,10 @@
 <?php
+// Archivo: public_html/Dispositivo.php
+// Descripción: Archivo que contiene el controlador para la gestión de dispositivos
+// Autor: M. Carlos Alvarez Carmona
+// Fecha: 2026-10-10
+// Versión: 1.0.0
+
 require_once('../Libraries/Functions.php');
 require_once('../Libraries/Session.class.php');
 require_once('../Ubicacion/Ubicacion.php');
@@ -37,7 +43,7 @@ if(isset($_GET['Action'])) {
                     $Data = array(
                         'Nombre' => $_POST['Nombre'],
                         'TipoDispositivo' => $_POST['TipoDispositivo'],
-                        'Dispositivo' => $_POST['Dispositivo'],
+                        'Dispositivo' => isset($_POST['Dispositivo']) ? $_POST['Dispositivo'] : array(),
                         'Modelo' => $_POST['Modelo'],
                         'Estatus' => $_POST['Estatus'],
                         'MAC' => strtoupper($_POST['MAC']),
@@ -210,7 +216,7 @@ if(isset($_GET['Action'])) {
                             $Data = array(
                                 'Nombre' => $_POST['Nombre' . $Key],
                                 'TipoDispositivo' => $_POST['TipoDispositivo' . $Key],
-                                'Dispositivo' => $_POST['Dispositivo' . $Key],
+                                'Dispositivo' => isset($_POST['Dispositivo' . $Key]) ? $_POST['Dispositivo' . $Key] : array(),
                                 'Modelo' => $_POST['Modelo' . $Key],
                                 'Estatus' => $_POST['Estatus' . $Key],
                                 'MAC' => strtoupper($_POST['MAC' . $Key]),

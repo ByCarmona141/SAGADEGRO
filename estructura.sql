@@ -1,4 +1,3 @@
-Enter password: 
 /*M!999999\- enable the sandbox mode */ 
 -- MariaDB dump 10.19-11.8.8-MariaDB, for debian-linux-gnu (x86_64)
 --
@@ -37,7 +36,7 @@ CREATE TABLE `Acceso` (
   KEY `fk_Acceso_TipoAcceso` (`TipoAcceso`),
   CONSTRAINT `fk_Acceso_Dispositivo` FOREIGN KEY (`Dispositivo`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Acceso_TipoAcceso` FOREIGN KEY (`TipoAcceso`) REFERENCES `TipoAcceso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de accesos para los dispositivos';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de accesos para los dispositivos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,7 +59,7 @@ CREATE TABLE `CelaAcceso` (
   KEY `idx_CelaAccesos_0` (`Usuario`),
   CONSTRAINT `Fk_CelaAccesos` FOREIGN KEY (`Acci_on`) REFERENCES `CelaAcci_on` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Fk_CelaAccesos_0` FOREIGN KEY (`Usuario`) REFERENCES `CelaUsuario` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=910 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1057 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,7 +192,7 @@ CREATE TABLE `CelaHistoriaContrase_na` (
   PRIMARY KEY (`id`),
   KEY `Fk_Historial_CelaUsuario_01` (`Usuario`),
   CONSTRAINT `Fk_Historial_CelaUsuario_01` FOREIGN KEY (`Usuario`) REFERENCES `CelaUsuario` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,7 +286,7 @@ CREATE TABLE `CelaPrivilegios` (
   KEY `idx_CelaPrivilegios` (`Origen`),
   CONSTRAINT `Fk_CelaPrivilegios` FOREIGN KEY (`Origen`) REFERENCES `CelaOrigen` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Fk_CelaPrivilegios_0` FOREIGN KEY (`Privilegio`) REFERENCES `CelaPrivilegio` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=21001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21065 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +380,7 @@ CREATE TABLE `CelaSession` (
   `Valor` text DEFAULT NULL,
   `Tipo` varchar(32) NOT NULL DEFAULT 'int',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20496 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20661 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -544,21 +543,39 @@ CREATE TABLE `Dispositivo` (
   `IP` varchar(45) DEFAULT 'DHCP',
   `Serial` varchar(100) DEFAULT NULL COMMENT 'Numero Serial del Dispositivo',
   `Estatus` int(10) unsigned NOT NULL COMMENT 'Estatus del Dispositivo (activo, inactivo, mantenimiento)',
-  `Dispositivo` int(10) unsigned DEFAULT NULL COMMENT 'Dispositivo padre al que pertenece',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `unq_Dispositivo` (`Nombre`),
   KEY `fk_Dispositivo_Rack` (`Rack`),
   KEY `fk_Dispositivo_Ubicacion` (`Ubicacion`),
   KEY `fk_Dispositivo_TipoDispositivo` (`TipoDispositivo`),
   KEY `fk_Dispositivo_Estatus` (`Estatus`),
-  KEY `fk_Dispositivo_Dispositivo` (`Dispositivo`),
   KEY `fk_Dispositivo_Modelo` (`Modelo`),
-  CONSTRAINT `fk_Dispositivo_Dispositivo` FOREIGN KEY (`Dispositivo`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Estatus` FOREIGN KEY (`Estatus`) REFERENCES `Estatus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Modelo` FOREIGN KEY (`Modelo`) REFERENCES `Modelo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Rack` FOREIGN KEY (`Rack`) REFERENCES `Rack` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_TipoDispositivo` FOREIGN KEY (`TipoDispositivo`) REFERENCES `TipoDispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Ubicacion` FOREIGN KEY (`Ubicacion`) REFERENCES `Ubicacion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de dispositivos';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de dispositivos';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `DispositivoPadre`
+--
+
+DROP TABLE IF EXISTS `DispositivoPadre`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `DispositivoPadre` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Dispositivo` int(10) unsigned NOT NULL COMMENT 'Dispositivo hijo',
+  `Padre` int(10) unsigned NOT NULL COMMENT 'Dispositivo padre',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_hijo_padre` (`Dispositivo`,`Padre`),
+  KEY `fk_DispositivoPadre_Dispositivo` (`Dispositivo`),
+  KEY `fk_DispositivoPadre_Padre` (`Padre`),
+  CONSTRAINT `fk_DispositivoPadre_Dispositivo` FOREIGN KEY (`Dispositivo`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_DispositivoPadre_Padre` FOREIGN KEY (`Padre`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Relacion muchos a muchos entre dispositivos (jerarquia)';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -712,8 +729,16 @@ CREATE TABLE `Ubicacion` (
   `Area` varchar(64) NOT NULL COMMENT 'Nombre del area',
   `Piso` tinyint(3) unsigned DEFAULT NULL COMMENT 'Piso en el que se encuentra la ubicacion',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de infraestructura de la empresa';
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de infraestructura de la empresa';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping events for database 'sagadegro'
+--
+
+--
+-- Dumping routines for database 'sagadegro'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -724,4 +749,4 @@ CREATE TABLE `Ubicacion` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-08-12 17:13:57
+-- Dump completed on 2026-10-10 20:43:31

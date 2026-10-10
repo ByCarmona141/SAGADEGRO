@@ -1,3 +1,10 @@
+<?php
+// Archivo: Dispositivo/DispositivoActualizar.php
+// Descripción: Archivo que contiene el formulario para actualizar un dispositivo
+// Autor: M. Carlos Alvarez Carmona
+// Fecha: 2026-10-10
+// Versión: 1.0.0
+?>
 <form class="form-horizontal form_validate" method="POST" name="Form_Dispositivo" id="Form_Dispositivo" action="<?= $FormAction . '?' . EncodeThis('Action=Actualizar'); ?>" >
     <fieldset>
         <span class="clearfix"></span>
@@ -45,16 +52,26 @@
 
                         print ReplaceContentPage($TagsToReplace, $ContentTipoDispositivo, $InputTemplate);
 
-                        $OpcDispositivo['Name']  = 'Dispositivo' . $Key;
+                        /*Se obtienen los dispositivos padre actuales (relacion muchos a muchos)*/
+                        $PadresSeleccionados = array();
+                        $PadresQuery = sprintf('SELECT `Padre` FROM DispositivoPadre WHERE `Dispositivo` = %s;',
+                                            GetSQLValueString($Key, 'int')
+                                        );
+                        if($PadresResult = $Connection -> query($PadresQuery)){
+                            while($PadreRow = $PadresResult -> fetch_assoc()){
+                                $PadresSeleccionados[] = $PadreRow['Padre'];
+                            }
+                        }
+
+                        $OpcDispositivo['Name']  = 'Dispositivo' . $Key . '[]';
                         $OpcDispositivo['Class'] = 'form-control ';
-                        $OpcDispositivo['Custom'] = 'data-live-search="true"';
+                        $OpcDispositivo['Custom'] = 'data-live-search="true" multiple data-actions-box="true"';
                         $Query              = DispositivoQueryCombo();
 
                         $ContentDispositivo = array(
-                            ' Dispositivo Padre: ',
-                            SFillSelect($Query, $OpcDispositivo, $DispositivoRecord['Dispositivo'], 1)
+                            ' Dispositivos Padre: ',
+                            SFillSelect($Query, $OpcDispositivo, $PadresSeleccionados, 1)
                         );
-
                         print ReplaceContentPage($TagsToReplace, $ContentDispositivo, $InputTemplate);
 
                         $OpcModelo['Name']  = 'Modelo' . $Key;
