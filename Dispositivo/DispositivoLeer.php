@@ -131,7 +131,7 @@
 		<th width="30%" class="sortable" ><div class="text-center"> Rack </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> IP </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Serial </div></th>
-		<th width="30%" class="sortable" ><div class="text-center"> Acciones </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Accesos </div></th>
 	</tr>
 	</thead>
 	<tbody>

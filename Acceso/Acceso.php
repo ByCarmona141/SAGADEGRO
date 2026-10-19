@@ -93,7 +93,7 @@
 					'ColumName' => 'Usuario',
 					'Alias'     => '',
 					'Extra'     => '',
-					'Render'    => ''
+					'Render'    => 'Usuario'
 				],
 				[
 					'Type'      => 2,
