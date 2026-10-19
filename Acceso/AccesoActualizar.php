@@ -74,6 +74,32 @@
                         );
                         print ReplaceContentPage($TagsToReplace, $ContentPassword, $InputTemplate);
 
+                        $CheckedPrincipal = (
+                            isset($AccesoRecord['Principal'])
+                            && (int) $AccesoRecord['Principal'] === 1
+                        ) ? 'checked' : '';
+
+                        $ContentPrincipal = array(
+                            'Acceso principal:',
+                            '<div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="Principal' . $Key . '"
+                                    id="Principal' . $Key . '"
+                                    value="1"
+                                    ' . $CheckedPrincipal . '
+                                />
+                                <label
+                                    class="form-check-label"
+                                    for="Principal' . $Key . '"
+                                >
+                                    Establecer como contraseña principal del dispositivo
+                                </label>
+                            </div>'
+                        );
+
+                        print ReplaceContentPage($TagsToReplace, $ContentPrincipal, $InputTemplate);
                     ?>
                 </fieldset>
             </div>

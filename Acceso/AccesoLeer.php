@@ -20,6 +20,7 @@
 		<th width="30%" class="sortable" ><div class="text-center"> Usuario </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Password </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Dispositivo </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Contraseña Principal </div></th>
 	</tr>
 	</thead>
 	<tbody>

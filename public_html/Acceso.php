@@ -45,7 +45,8 @@ if(isset($_GET['Action'])) {
                         'Puerto' => $_POST['Puerto'],
                         'Usuario' => $_POST['Usuario'],
                         'Password' => $_POST['Password'],
-                        'Dispositivo' => $Dispositivo
+                        'Dispositivo' => $Dispositivo,
+                        'Principal' => isset($_POST['Principal']) ? 1 : 0
                     );
                     $Acceso = AccesoCrear($Data);
 
@@ -214,7 +215,8 @@ if(isset($_GET['Action'])) {
                                 'Puerto' => $_POST['Puerto' . $Key],
                                 'Usuario' => $_POST['Usuario' . $Key],
                                 'Password' => $_POST['Password' . $Key],
-                                'Dispositivo' => $_POST['Dispositivo' . $Key]
+                                'Dispositivo' => $_POST['Dispositivo' . $Key],
+                                'Principal'   => isset($_POST['Principal' . $Key]) ? 1 : 0
                             );
                             $Acceso = AccesoActualizar($Key, $Data);
 
@@ -300,6 +302,62 @@ if(isset($_GET['Action'])) {
                 }
             }
             break;
+        case 'ActualizarPrincipal':
+            if (isset($_GET['Key']) && filter_var($_GET['Key'], FILTER_VALIDATE_INT) !== false && (int) $_GET['Key'] > 0 && isset($Privileges['Actualizar']) && $Privileges['Actualizar'] == 1) {
+                $Key = (int) $_GET['Key'];
+
+                // Actualizar el acceso principal.
+                $Acceso = AccesoActualizarPrincipal($Key);
+
+                if ($Acceso['Status'] == 'OK') {
+                    RecordLog('Acceso', $Key, 5, $SessionUserId, ['Principal' => 1]);
+
+                    $ArgsCelaActionMessage = array(
+                        'StatusMessage' => 'success',
+                        'IconMessage'   => 'fa-check',
+                        'TitleMessage'  => 'Actualización exitosa!',
+                        'TextMessage'   => 'El acceso principal se actualizó correctamente.'
+                    );
+                } else {
+                    $ArgsCelaActionMessage = array(
+                        'StatusMessage' => 'danger',
+                        'IconMessage'   => 'fa-times',
+                        'TitleMessage'  => 'Oops!... Ocurrió un error',
+                        'TextMessage'   => $Acceso['Error']
+                    );
+                }
+
+                $Content .= LoadContentPage('../CelaTemplate/CelaActionMessage.php', $ArgsCelaActionMessage);
+            } else {
+                $ArgsCelaActionMessage = array(
+                    'StatusMessage' => 'danger',
+                    'IconMessage'   => 'fa-times',
+                    'TitleMessage'  => 'Acceso denegado',
+                    'TextMessage'   => 'No tienes permisos para realizar esta operación o el identificador no es válido.'
+                );
+
+                $Content .= LoadContentPage('../CelaTemplate/CelaActionMessage.php', $ArgsCelaActionMessage);
+            }
+
+            // Mostrar nuevamente el listado.
+            if (isset($Privileges['Leer']) && $Privileges['Leer'] == 1) {
+                $ArgsAccesoHeadContent['FormTitle'] = 'Listado de Accesos';
+
+                if (isset($_GET['Dispositivo']) && $_GET['Dispositivo'] != '') {
+                    $ArgsAccesoVistaLeer['Params']['Dispositivo'] = $_GET['Dispositivo'];
+                }
+
+                $ArgsAccesoVistaLeer['SessionRandom'] = $SessionRandom;
+
+                $Content .= LoadContentPage('../Acceso/AccesoLeer.php', $ArgsAccesoVistaLeer);
+
+                $MyScripts .= LoadContentPage('../Acceso/AccesoJavascriptLeer.php');
+
+                $ArgsAccesoJavascript = array('Table' => 'Acceso');
+
+                $MyScripts .= LoadContentPage('../CelaTemplate/CelaTableToolsScript.php', $ArgsAccesoJavascript);
+            }
+        break;
     }
 } else {
     /*Se carga la vista de lectura*/

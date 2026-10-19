@@ -22,6 +22,15 @@
 	if($ColumRender == 'Contrasena'){
 		$Render['Contrasena'] =   '<div class="w-100 text-center"><p id="Pass'. $Record[$IndexColumn] . '" class="d-none">' . $Record[$ColumName] . '</p><button class="clipboard fa fa-lock btn btn-primary btn-md zeroclipboard-is-hover" data-clipboard-text="' . $Record[$ColumName] . '" id="button-copy-password" onclick="copyToClipboard(`#Pass'. $Record[$IndexColumn] . '`)" title="Copiar Contraseña" data-toggle="popover" data-placement="right" data-trigger="focus" data-content="La Contraseña ha sido copiada" data-original-title="Copiar Contraseña"></button></div>';
 	}
+	
+	if($ColumRender == 'ContrasenaPrincipal'){
+		$Render['ContrasenaPrincipal'] =   '';
+		if ($Record[$ColumName] == 0) {
+			$Render['ContrasenaPrincipal'] =   '<div class="text-center">' .
+				'<a href="' . $MyTable . '?' . EncodeThis('Action=ActualizarPrincipal&Key=' . $Record[$IndexColumn]) . '" class="fa fa-key btn btn-success btn-md"></a>' .
+			'</div>';
+		}
+	}
 
 	if($ColumRender == 'Pricing'){
 		$Decimals = (isset($TableConfig['Decimals']) ? $TableConfig['Decimals']:2);

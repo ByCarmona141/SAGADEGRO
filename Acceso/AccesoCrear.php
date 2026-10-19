@@ -65,6 +65,12 @@ $TagsToReplace = array(
                 '<input type="password" class=" form-control focused  e_requerido  e_longitud" name="Password" id="Password"  data-rango=\'{"minimo":"1", "maximo":"64", "mensaje":"Introduce un valor entre 1 y 64 caracteres de longitud"}\' />'
         );
         print ReplaceContentPage($TagsToReplace, $ContenPassword, $InputsTemplate);
+
+        $ContenPrincipal = array( 
+                'Acceso principal:', 
+                '<div class="form-check"> <input class="form-check-input" type="checkbox" name="Principal" id="Principal" value="1" /> <label class="form-check-label" for="Principal"> Establecer como contraseña principal del dispositivo </label> </div>' 
+        ); 
+        print ReplaceContentPage( $TagsToReplace, $ContenPrincipal, $InputsTemplate );
         ?>
         <input type="hidden" name="AccesoInsert" value="AccesoInsert"/>
         <span class="clearfix"></span>
