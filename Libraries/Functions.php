@@ -512,17 +512,36 @@
 	}
 
 	function Encrypt($String, $Key = 'b5s1i4t5a1316') {
-		if(is_array($String)){
+		if (is_array($String)) {
 			extract($String, EXTR_OVERWRITE);
 		}
 
-		$Result = '';
-		for($i=0; $i < strlen($String); $i++) {
-			$Char     = substr($String, $i, 1);
-			$KeyChar  = substr($Key, ($i % strlen($Key)) - 1, 1);
-			$Char     = chr(ord($Char) + ord($KeyChar));
-			$Result   .= $Char;
+		// Validar la clave de cifrado.
+		if (!is_string($Key) || $Key === '') {
+			$Key = 'b5s1i4t5a1316';
 		}
+
+		// Normalizar el texto de entrada.
+		if ($String === null) {
+			$String = '';
+		} elseif (!is_string($String)) {
+			$String = (string) $String;
+		}
+
+		$Result = '';
+		$KeyLength = strlen($Key);
+		$StringLength = strlen($String);
+
+		for ($i = 0; $i < $StringLength; $i++) {
+			$Char = substr($String, $i, 1);
+
+			$KeyChar = substr($Key, ($i % $KeyLength) - 1, 1);
+
+			$Char = chr(ord($Char) + ord($KeyChar));
+
+			$Result .= $Char;
+		}
+
 		return base64_encode($Result);
 	}
 
