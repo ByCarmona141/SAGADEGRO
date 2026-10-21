@@ -497,6 +497,7 @@
       const statusColor = isActive ? '#16a34a' : '#dc2626';
       const statusBg = isActive ? '#dcfce7' : '#fee2e2';
       const statusText = isActive ? 'Activo' : 'Inactivo';
+      const credButtonsHtml = this._credencialesBotonesHtml(device);
 
       card.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #f1f5f9;">
@@ -530,6 +531,7 @@
             onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0f172a'">
             <i class="fas fa-key"></i> Accesos
           </button>
+          ${credButtonsHtml}
           <button class="sg-btn-detalle" style="padding:7px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;transition:background 0.15s;"
             onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
             <i class="fas fa-edit"></i>
@@ -571,7 +573,67 @@
         }
       });
 
+      card.querySelectorAll('.sg-btn-copy').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this._copiarTexto(decodeURIComponent(btn.dataset.copy), btn.dataset.label);
+        });
+      });
+
       return card;
+    }
+
+    _credencialesBotonesHtml(device) {
+      const cred = device.credentials;
+      if (!cred || (!cred.host && !cred.user && !cred.password)) {
+        return '<span style="flex:1;align-self:center;text-align:center;font-size:10px;color:#cbd5e1;">Sin acceso principal</span>';
+      }
+      const btn = (valor, label, icono, title) => {
+        if (!valor) return '';
+        return `<button class="sg-btn-copy" data-copy="${encodeURIComponent(valor)}" data-label="${label}" title="${title}"
+          style="padding:7px 10px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#eff6ff;color:#1d4ed8;border:1px solid #dbeafe;transition:background 0.15s;"
+          onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+          <i class="fas ${icono}"></i>
+        </button>`;
+      };
+      return btn(cred.host, 'Enlace', 'fa-link', 'Copiar enlace (host)')
+           + btn(cred.user, 'Usuario', 'fa-user', 'Copiar usuario')
+           + btn(cred.password, 'Contrase\u00f1a', 'fa-key', 'Copiar contrase\u00f1a');
+    }
+
+    _copiarTexto(texto, etiqueta) {
+      const mostrarExito = () => {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'success',
+            title: etiqueta + ' copiado al portapapeles',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1800,
+            timerProgressBar: true
+          });
+        }
+      };
+
+      const fallback = () => {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); mostrarExito(); }
+        catch (err) { console.error('SagaGraph: no se pudo copiar', err); }
+        document.body.removeChild(ta);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto).then(mostrarExito).catch(fallback);
+      } else {
+        fallback();
+      }
     }
 
     _getTypeColor(type) {

@@ -324,6 +324,7 @@ if(isset($_GET['Action'])) {
                 
                 /*Se carga la vista de topología*/
                 $Content .= LoadContentPage('../Dispositivo/DispositivoTopologia.php', $ArgsDispositivoVistaTopologia);
+                $MyScripts  .= LoadContentPage('../Dispositivo/DispositivoJavascriptLeer.php');
                 
                 /*Se carga el CSS de SagaGraph en MYSTYLE*/
                 $MyStyles .= '<link rel="stylesheet" href="assets/css/sagagraph.css">' . "\n";
@@ -334,6 +335,7 @@ if(isset($_GET['Action'])) {
     /*Se carga la vista de lectura*/
     if(isset($Privileges['Leer']) && $Privileges['Leer'] == 1) {
         $Content  .= LoadContentPage('../Dispositivo/DispositivoLeer.php', $ArgsDispositivoVistaLeer);
+        $MyScripts  .= LoadContentPage('../Dispositivo/DispositivoJavascriptLeer.php');
 
         $ArgsDispositivoJavascript = array(
             'Table' => 'Dispositivo',

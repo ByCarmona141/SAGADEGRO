@@ -113,7 +113,53 @@
 	function DispositivoLeer() {
 		global $Privileges;
 
-		$Table =  sprintf('(SELECT d.id, d.Nombre, d.MAC, m.Nombre AS Modelo, ma.Nombre AS Marca, u.Area AS Ubicacion, u.Piso, r.Nombre AS Rack, td.Nombre AS TipoDispositivo, d.IP, d.Serial, e.Nombre AS Estatus, padres.DispositivosPadre FROM Dispositivo d LEFT JOIN Modelo m ON d.Modelo = m.id LEFT JOIN Marca ma ON m.Marca = ma.id LEFT JOIN Ubicacion u ON d.Ubicacion = u.id LEFT JOIN Rack r ON d.Rack = r.id LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id LEFT JOIN CelaIcono ci ON td.Icono = ci.id LEFT JOIN Estatus e ON d.Estatus = e.id LEFT JOIN (SELECT dp.Dispositivo, GROUP_CONCAT(p.Nombre ORDER BY p.Nombre SEPARATOR ", ") AS DispositivosPadre FROM DispositivoPadre dp INNER JOIN Dispositivo p ON p.id = dp.Padre GROUP BY dp.Dispositivo) padres ON padres.Dispositivo = d.id)');
+		$Table =  sprintf('(SELECT 
+								d.id, 
+								d.Nombre, 
+								d.MAC, 
+								m.Nombre AS Modelo, 
+								ma.Nombre AS Marca, 
+								u.Area AS Ubicacion, 
+								u.Piso, 
+								r.Nombre AS Rack, 
+								td.Nombre AS TipoDispositivo, 
+								d.IP, 
+								d.Serial, 
+								e.Nombre AS Estatus, 
+								ta.Nombre AS TipoAcceso,
+								acc.Host,
+								acc.Usuario,
+    							acc.Password,
+								padres.DispositivosPadre 
+									FROM Dispositivo d 
+										LEFT JOIN Modelo m 
+											ON d.Modelo = m.id 
+										LEFT JOIN Marca ma 
+											ON m.Marca = ma.id 
+										LEFT JOIN Ubicacion u 
+											ON d.Ubicacion = u.id 
+										LEFT JOIN Rack r 
+											ON d.Rack = r.id 
+										LEFT JOIN TipoDispositivo td 
+											ON d.TipoDispositivo = td.id 
+										LEFT JOIN CelaIcono ci 
+											ON td.Icono = ci.id 
+										LEFT JOIN Estatus e 
+											ON d.Estatus = e.id 
+										LEFT JOIN Acceso acc
+    										ON d.id = acc.Dispositivo
+    											AND acc.Principal = 1
+										LEFT JOIN TipoAcceso ta
+    										ON acc.TipoAcceso = ta.id
+										LEFT JOIN (
+											SELECT dp.Dispositivo, 
+												GROUP_CONCAT(p.Nombre ORDER BY p.Nombre SEPARATOR ", ") AS DispositivosPadre 
+													FROM DispositivoPadre dp 
+														INNER JOIN Dispositivo p 
+															ON p.id = dp.Padre 
+																GROUP BY dp.Dispositivo
+										) padres 
+										 	ON padres.Dispositivo = d.id)');
 
 		$ServerQuery = [
 			'Table'     => [
@@ -210,6 +256,34 @@
 					'Render'    => ''
 				],
 				[
+					'Type'      => 2,
+					'ColumName' => 'TipoAcceso',
+					'Alias'     => '',
+					'Extra'     => '',
+					'Render'    => ''
+				],
+				[
+					'Type'      => 2,
+					'ColumName' => 'Host',
+					'Alias'     => '',
+					'Extra'     => '',
+					'Render'    => 'Link'
+				],
+				[
+					'Type'      => 2,
+					'ColumName' => 'Usuario',
+					'Alias'     => '',
+					'Extra'     => '',
+					'Render'    => 'Usuario'
+				],
+				[
+					'Type'      => 2,
+					'ColumName' => 'Password',
+					'Alias'     => '',
+					'Extra'     => '',
+					'Render'    => 'Contrasena'
+				],
+				[
 					'Type'      => 1,
 					'ColumName' => '',
 					'Alias'     => '',
@@ -291,7 +365,10 @@
 				e.Nombre AS status_raw,
 				td.Nombre AS tipo_raw,
 				u.Area AS location,
-				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw
+				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw,
+				(SELECT a.Host FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_host,
+				(SELECT a.Usuario FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_usuario,
+				(SELECT a.`Password` FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_password
 			FROM Dispositivo d
 			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
 			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
@@ -345,10 +422,19 @@
 				$parents[] = (int) $ParentId;
 			}
 		}
+		$credentials = NULL;
+		if(!empty($Row['acceso_host']) || !empty($Row['acceso_usuario']) || !empty($Row['acceso_password'])){
+			$credentials = array(
+				'host'     => !empty($Row['acceso_host'])     ? $Row['acceso_host']     : '',
+				'user'     => !empty($Row['acceso_usuario'])  ? $Row['acceso_usuario']  : '',
+				'password' => !empty($Row['acceso_password']) ? $Row['acceso_password'] : ''
+			);
+		}
 
 		return array(
 			'id'       => (int) $Row['id'],
 			'parents'  => $parents,
+			'credentials' => $credentials,
 			'name'     => $Row['name'],
 			'type'     => $tipoSaga,
 			'status'   => $estado,
@@ -378,7 +464,10 @@
 				e.Nombre AS status_raw,
 				td.Nombre AS tipo_raw,
 				u.Area AS location,
-				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw
+				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw,
+				(SELECT a.Host FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_host,
+				(SELECT a.Usuario FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_usuario,
+				(SELECT a.`Password` FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_password
 			FROM Dispositivo d
 			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
 			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id
@@ -414,7 +503,10 @@
 				e.Nombre AS status_raw,
 				td.Nombre AS tipo_raw,
 				u.Area AS location,
-				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw
+				(SELECT GROUP_CONCAT(dp.Padre ORDER BY dp.Padre SEPARATOR ",") FROM DispositivoPadre dp WHERE dp.Dispositivo = d.id) AS parents_raw,
+				(SELECT a.Host FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_host,
+				(SELECT a.Usuario FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_usuario,
+				(SELECT a.`Password` FROM Acceso a WHERE a.Dispositivo = d.id AND a.Principal = 1 LIMIT 1) AS acceso_password
 			FROM Dispositivo d
 			LEFT JOIN TipoDispositivo td ON d.TipoDispositivo = td.id
 			LEFT JOIN Ubicacion u        ON d.Ubicacion      = u.id

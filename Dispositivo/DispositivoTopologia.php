@@ -59,7 +59,7 @@ $DispositivoEditUrls = array();
 if (isset($Dispositivos) && is_array($Dispositivos)) {
     foreach ($Dispositivos as $d) {
         // URL para crear acceso en el módulo Acceso
-        $AccesoUrls[$d['id']] = 'Acceso?' . EncodeThis('Action=Crear&Dispositivo=' . $d['id']);
+        $AccesoUrls[$d['id']] = 'Acceso?' . EncodeThis('Dispositivo=' . $d['id']);
 
         // URL para actualizar/editar el dispositivo (mismo patrón CELA)
         $DispositivoEditUrls[$d['id']] = 'Dispositivo?' . EncodeThis('Key[]=' . $d['id'] . '&Action=Actualizar');

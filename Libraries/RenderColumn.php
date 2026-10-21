@@ -15,12 +15,25 @@
 		$Render['Icon'] = '<div align="center"><i class="fa-lg ' . $Record[$ColumName] . '"></i></div>';
 	}
 
+	if($ColumRender == 'Link'){
+		$Render['Link'] = '';
+		if (!empty($Record[$ColumName])) {
+			$Render['Link'] =   '<div class="w-100 text-center"><p id="Link'. $Record[$IndexColumn] . '" class="d-none">' . $Record[$ColumName] . '</p><button class="clipboard fa fa-link btn btn-primary btn-md zeroclipboard-is-hover" data-clipboard-text="' . $Record[$ColumName] . '" id="button-copy-link" onclick="copyToClipboard(`#Link'. $Record[$IndexColumn] . '`)" title="Copiar Enlace" data-toggle="popover" data-placement="right" data-trigger="focus" data-content="El enlace ha sido copiado" data-original-title="Copiar Enlace"></button></div>';
+		}
+	}
+	
 	if($ColumRender == 'Usuario'){
-		$Render['Usuario'] =   '<div class="w-100 text-center"><p id="User'. $Record[$IndexColumn] . '" class="d-none">' . $Record[$ColumName] . '</p><button class="clipboard fa fa-user btn btn-primary btn-md zeroclipboard-is-hover" data-clipboard-text="' . $Record[$ColumName] . '" id="button-copy-user" onclick="copyToClipboard(`#User'. $Record[$IndexColumn] . '`)" title="Copiar Usuario" data-toggle="popover" data-placement="right" data-trigger="focus" data-content="El Usuario ha sido copiado" data-original-title="Copiar Usuario"></button></div>';
+		$Render['Usuario'] = '';
+		if (!empty($Record[$ColumName])) {
+			$Render['Usuario'] =   '<div class="w-100 text-center"><p id="User'. $Record[$IndexColumn] . '" class="d-none">' . $Record[$ColumName] . '</p><button class="clipboard fa fa-user btn btn-primary btn-md zeroclipboard-is-hover" data-clipboard-text="' . $Record[$ColumName] . '" id="button-copy-user" onclick="copyToClipboard(`#User'. $Record[$IndexColumn] . '`)" title="Copiar Usuario" data-toggle="popover" data-placement="right" data-trigger="focus" data-content="El Usuario ha sido copiado" data-original-title="Copiar Usuario"></button></div>';
+		}
 	}
 
 	if($ColumRender == 'Contrasena'){
-		$Render['Contrasena'] =   '<div class="w-100 text-center"><p id="Pass'. $Record[$IndexColumn] . '" class="d-none">' . $Record[$ColumName] . '</p><button class="clipboard fa fa-lock btn btn-primary btn-md zeroclipboard-is-hover" data-clipboard-text="' . $Record[$ColumName] . '" id="button-copy-password" onclick="copyToClipboard(`#Pass'. $Record[$IndexColumn] . '`)" title="Copiar Contraseña" data-toggle="popover" data-placement="right" data-trigger="focus" data-content="La Contraseña ha sido copiada" data-original-title="Copiar Contraseña"></button></div>';
+		$Render['Contrasena'] = '';
+		if (!empty($Record[$ColumName])) {
+			$Render['Contrasena'] =   '<div class="w-100 text-center"><p id="Pass'. $Record[$IndexColumn] . '" class="d-none">' . $Record[$ColumName] . '</p><button class="clipboard fa fa-lock btn btn-primary btn-md zeroclipboard-is-hover" data-clipboard-text="' . $Record[$ColumName] . '" id="button-copy-password" onclick="copyToClipboard(`#Pass'. $Record[$IndexColumn] . '`)" title="Copiar Contraseña" data-toggle="popover" data-placement="right" data-trigger="focus" data-content="La Contraseña ha sido copiada" data-original-title="Copiar Contraseña"></button></div>';
+		}
 	}
 	
 	if($ColumRender == 'ContrasenaPrincipal'){

@@ -131,6 +131,10 @@
 		<th width="30%" class="sortable" ><div class="text-center"> Rack </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> IP </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Serial </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Tipo de Acceso </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Host </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Usuario </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Password </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Accesos </div></th>
 	</tr>
 	</thead>
