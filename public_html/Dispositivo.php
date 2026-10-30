@@ -10,7 +10,6 @@ require_once('../Libraries/Session.class.php');
 require_once('../Ubicacion/Ubicacion.php');
 require_once('../Rack/Rack.php');
 require_once('../TipoDispositivo/TipoDispositivo.php');
-require_once('../Estatus/Estatus.php');
 require_once('../Modelo/Modelo.php');
 require_once('../Dispositivo/Dispositivo.php');
 require_once('../Libraries/Connection.php');
@@ -45,7 +44,6 @@ if(isset($_GET['Action'])) {
                         'TipoDispositivo' => $_POST['TipoDispositivo'],
                         'Dispositivo' => isset($_POST['Dispositivo']) ? $_POST['Dispositivo'] : array(),
                         'Modelo' => $_POST['Modelo'],
-                        'Estatus' => $_POST['Estatus'],
                         'MAC' => strtoupper($_POST['MAC']),
                         'Ubicacion' => $_POST['Ubicacion'],
                         'Rack' => $_POST['Rack'],
@@ -218,7 +216,6 @@ if(isset($_GET['Action'])) {
                                 'TipoDispositivo' => $_POST['TipoDispositivo' . $Key],
                                 'Dispositivo' => isset($_POST['Dispositivo' . $Key]) ? $_POST['Dispositivo' . $Key] : array(),
                                 'Modelo' => $_POST['Modelo' . $Key],
-                                'Estatus' => $_POST['Estatus' . $Key],
                                 'MAC' => strtoupper($_POST['MAC' . $Key]),
                                 'Ubicacion' => $_POST['Ubicacion' . $Key],
                                 'Rack' => $_POST['Rack' . $Key],

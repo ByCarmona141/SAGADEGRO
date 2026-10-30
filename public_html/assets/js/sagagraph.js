@@ -3,7 +3,7 @@
  * Inspirada en JointJS+ Organizational Chart + Dynamic Tooltip Content
  * Para SAGADEGRO - Sistema de Gestión de Dispositivos
  * 
- * @version 1.0.0
+ * @version 1.0.1
  * @author Desarrollador SAGADEGRO
  */
 
@@ -517,6 +517,12 @@
               ${statusText}
             </span>
           </div>
+          ${device.lastConnection ? `
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:#94a3b8;">Última conexión</span>
+              <span style="font-weight:500;color:#334155;font-size:10px;white-space:nowrap;">${this._escapeHtml(device.lastConnection)}</span>
+            </div>` 
+          : ''}
           <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
             <span style="color:#94a3b8;">IP</span>
             <span style="font-weight:500;color:#334155;font-family:monospace;font-size:10px;">${device.ip || 'N/A'}</span>
@@ -777,6 +783,9 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
           <span style="color:#94a3b8;">Estado</span><span style="color:${statusColor}">${statusText}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <span style="color:#94a3b8;">Última conexión</span><span>${this._escapeHtml(device.lastConnection || 'N/A')}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
           <span style="color:#94a3b8;">IP</span><span style="font-family:monospace;">${device.ip || 'N/A'}</span>

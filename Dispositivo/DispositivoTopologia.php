@@ -163,7 +163,7 @@ $DispositivoEditUrlsJson = json_encode($DispositivoEditUrls);
 
     var graph = new SagaGraph('sg-graph-container', {
         nodeWidth: 240,
-        nodeHeight: 190,
+        nodeHeight: 215,
         gapX: 90,
         gapY: 130,
         minZoom: 0.15,

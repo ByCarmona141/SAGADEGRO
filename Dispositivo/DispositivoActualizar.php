@@ -86,17 +86,6 @@
 
                         print ReplaceContentPage($TagsToReplace, $ContentModelo, $InputTemplate);
 
-                        $OpcEstatus['Name']  = 'Estatus' . $Key;
-                        $OpcEstatus['Class'] = 'form-control e_requerido';
-                        $Query              = EstatusQueryCombo();
-
-                        $ContentEstatus = array(
-                            ' <font color="red">*</font> Estado Actual: ',
-                            SFillSelect($Query, $OpcEstatus, $DispositivoRecord['Status'])
-                        );
-
-                        print ReplaceContentPage($TagsToReplace, $ContentEstatus, $InputTemplate);
-
                         $ContentMAC = array(
                             ' MAC:',
                             '<input class="form-control focused" name="MAC' . $Key . '" id="MAC' . $Key . '" data-rango=\'{"minimo":"1", "maximo":"17", "mensaje":"Introduce un valor entre 1 y 17 caracteres de longitud"}\' type="text" value="' . $DispositivoRecord['MAC'] . '" />'

@@ -55,16 +55,6 @@
         );
         print ReplaceContentPage($TagsToReplace, $ContentModelo, $InputsTemplate);
 
-        $OpcEstatus['Name']     = 'Estatus';
-        $OpcEstatus['Class']    = 'form-control focused e_requerido';
-        $Query = EstatusQueryCombo();
-
-        $ContentEstatus = array(
-            '<font color="red">*</font> Estatus:',
-            FillSelect($Query, $OpcEstatus, 1)
-        );
-        print ReplaceContentPage($TagsToReplace, $ContentEstatus, $InputsTemplate);
-
         $ContenMAC = array(
 			' MAC: ',
 			'<input type="text" class=" form-control focused  e_longitud" name="MAC" id="MAC" placeholder="00:1A:2B:3C:4D:5E"  data-rango=\'{"minimo":"1", "maximo":"17", "mensaje":"Introduce un valor entre 1 y 17 caracteres de longitud"}\' />'

@@ -121,17 +121,18 @@
 			</div>
 		</th>
 		<th width="30%" class="sortable" ><div class="text-center"> Nombre </div></th>
-		<th width="30%" class="sortable" ><div class="text-center"> Tipo de Dispositivo </div></th>
-		<th width="30%" class="sortable" ><div class="text-center"> Dispositivos Padre </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Tipo de dispositivo </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Dispositivos padre </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Marca </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Modelo </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Estatus del Dispositivo </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Ultima conexión </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> MAC </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Ubicacion </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Rack </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> IP </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Serial </div></th>
-		<th width="30%" class="sortable" ><div class="text-center"> Tipo de Acceso </div></th>
+		<th width="30%" class="sortable" ><div class="text-center"> Tipo de acceso </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Host </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Usuario </div></th>
 		<th width="30%" class="sortable" ><div class="text-center"> Password </div></th>
