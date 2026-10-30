@@ -170,12 +170,13 @@ $DispositivoEditUrlsJson = json_encode($DispositivoEditUrls);
         maxZoom: 3
     });
 
+    // Rutas de los botones de la libreria
     graph
         .setData(dispositivosFiltrados)
         .on('onRegistrarAcceso', function(device) {
             // Redirige a Acceso.php?Action=Crear&Dispositivo=ID (codificado con EncodeThis)
             if (accesoUrls[device.id]) {
-                window.location.href = accesoUrls[device.id];
+                window.open(accesoUrls[device.id], '_blank', 'noopener');
             }
         })
         .on('onVerDetalle', function(device) {
