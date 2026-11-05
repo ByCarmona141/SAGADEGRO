@@ -62,7 +62,7 @@ CREATE TABLE `CelaAcceso` (
   KEY `idx_CelaAccesos_0` (`Usuario`),
   CONSTRAINT `Fk_CelaAccesos` FOREIGN KEY (`Acci_on`) REFERENCES `CelaAcci_on` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Fk_CelaAccesos_0` FOREIGN KEY (`Usuario`) REFERENCES `CelaUsuario` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1077 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1098 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -383,7 +383,7 @@ CREATE TABLE `CelaSession` (
   `Valor` text DEFAULT NULL,
   `Tipo` varchar(32) NOT NULL DEFAULT 'int',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20683 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20749 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -545,22 +545,21 @@ CREATE TABLE `Dispositivo` (
   `TipoDispositivo` int(10) unsigned NOT NULL COMMENT 'Tipo de Dispositivo',
   `IP` varchar(45) DEFAULT 'DHCP',
   `Serial` varchar(100) DEFAULT NULL COMMENT 'Numero Serial del Dispositivo',
-  `Estatus` int(10) unsigned NOT NULL COMMENT 'Estatus del Dispositivo (activo, inactivo, mantenimiento)',
   `Dispositivo` int(10) unsigned DEFAULT NULL COMMENT 'Dispositivo padre al que pertenece',
+  `Estatus` tinyint(3) unsigned NOT NULL COMMENT 'Estatus del Dispositivo al hacer ping',
+  `UltimaConexion` datetime DEFAULT NULL COMMENT 'Fecha de ultima conexion con el dispositivo',
   PRIMARY KEY (`id`),
   KEY `fk_Dispositivo_Rack` (`Rack`),
   KEY `fk_Dispositivo_Ubicacion` (`Ubicacion`),
   KEY `fk_Dispositivo_TipoDispositivo` (`TipoDispositivo`),
-  KEY `fk_Dispositivo_Estatus` (`Estatus`),
   KEY `fk_Dispositivo_Dispositivo` (`Dispositivo`),
   KEY `fk_Dispositivo_Modelo` (`Modelo`),
   CONSTRAINT `fk_Dispositivo_Dispositivo` FOREIGN KEY (`Dispositivo`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Dispositivo_Estatus` FOREIGN KEY (`Estatus`) REFERENCES `Estatus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Modelo` FOREIGN KEY (`Modelo`) REFERENCES `Modelo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Rack` FOREIGN KEY (`Rack`) REFERENCES `Rack` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_TipoDispositivo` FOREIGN KEY (`TipoDispositivo`) REFERENCES `TipoDispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Dispositivo_Ubicacion` FOREIGN KEY (`Ubicacion`) REFERENCES `Ubicacion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de dispositivos';
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de dispositivos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -580,7 +579,7 @@ CREATE TABLE `DispositivoPadre` (
   KEY `fk_DispositivoPadre_Padre` (`Padre`),
   CONSTRAINT `fk_DispositivoPadre_Dispositivo` FOREIGN KEY (`Dispositivo`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_DispositivoPadre_Padre` FOREIGN KEY (`Padre`) REFERENCES `Dispositivo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Relacion muchos a muchos entre dispositivos (jerarquia)';
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Relacion muchos a muchos entre dispositivos (jerarquia)';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -736,6 +735,14 @@ CREATE TABLE `Ubicacion` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Tabla de infraestructura de la empresa';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping events for database 'sagadegro'
+--
+
+--
+-- Dumping routines for database 'sagadegro'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -746,4 +753,4 @@ CREATE TABLE `Ubicacion` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-10-20 18:58:46
+-- Dump completed on 2026-10-30 19:03:26

@@ -729,8 +729,12 @@
     }
 
     _isEdgeHighlighted(edge) {
-      if (!this.highlightedNode) return false;
-      return edge.from === this.highlightedNode || edge.to === this.highlightedNode;
+      if (!this.highlightedNode || !this._relatedNodes) return false;
+      // Se resalta la flecha solo si AMBOS extremos están en el camino
+      // relacionado con el nodo seleccionado (seleccionado + ancestros +
+      // descendientes transitivos). Así se pinta la cadena completa hasta
+      // el dispositivo hijo, no solo la arista directa.
+      return this._relatedNodes.has(edge.from) && this._relatedNodes.has(edge.to);
     }
 
     // ============================================================
@@ -831,11 +835,17 @@
         this.highlightedNode = nodeId;
       }
 
+      // Conjunto de nodos relacionados: seleccionado + ancestros + descendientes
+      // Se calcula una sola vez y se reutiliza para nodos y flechas
+      this._relatedNodes = this.highlightedNode
+        ? this._computeRelatedNodes(this.highlightedNode)
+        : null;
+
       // Actualizar opacidad de nodos
       this.nodeElements.forEach((el, id) => {
-        if (!this.highlightedNode) {
+        if (!this._relatedNodes) {
           el.style.opacity = '1';
-        } else if (this._isNodeRelated(id, this.highlightedNode)) {
+        } else if (this._relatedNodes.has(id)) {
           el.style.opacity = '1';
         } else {
           el.style.opacity = '0.35';
@@ -845,33 +855,56 @@
       this._renderEdges();
     }
 
+    _computeRelatedNodes(highlightId) {
+      const relacionados = new Set([highlightId]);
+      const deviceMap = new Map(this.devices.map(d => [d.id, d]));
+
+      // Índice de hijos para no recorrer dispositivos en cada paso
+      const hijosDe = new Map();
+      this.devices.forEach(d => {
+        this._getParents(d).forEach(pid => {
+          if (!hijosDe.has(pid)) hijosDe.set(pid, []);
+          hijosDe.get(pid).push(d.id);
+        });
+      });
+
+      // Ancestros transitivos (seguimos TODOS los padres, no solo el primero)
+      const pila = [highlightId];
+      const visitados = new Set([highlightId]);
+      while (pila.length) {
+        const currId = pila.pop();
+        const curr = deviceMap.get(currId);
+        if (!curr) continue;
+        this._getParents(curr).forEach(pid => {
+          if (deviceMap.has(pid) && !visitados.has(pid)) {
+            visitados.add(pid);
+            relacionados.add(pid);
+            pila.push(pid);
+          }
+        });
+      }
+
+      // Descendientes transitivos
+      pila.length = 0;
+      pila.push(highlightId);
+      const visitadosDesc = new Set([highlightId]);
+      while (pila.length) {
+        const currId = pila.pop();
+        (hijosDe.get(currId) || []).forEach(hid => {
+          if (!visitadosDesc.has(hid)) {
+            visitadosDesc.add(hid);
+            relacionados.add(hid);
+            pila.push(hid);
+          }
+        });
+      }
+
+      return relacionados;
+    }
+
     _isNodeRelated(nodeId, highlightId) {
-      if (nodeId === highlightId) return true;
-
-      const ascendentesDe = (startId) => {
-        const encontrados = new Set();
-        const visitados = new Set();
-        let curr = this.devices.find(d => d.id === startId);
-        while (curr) {
-          if (visitados.has(curr.id)) break; // proteccion contra ciclos
-          visitados.add(curr.id);
-          this._getParents(curr).forEach(pid => {
-            if (!encontrados.has(pid)) {
-              encontrados.add(pid);
-            }
-          });
-          const siguiente = this._getParents(curr).find(pid => this.devices.some(d => d.id === pid));
-          if (siguiente === undefined) break;
-          curr = this.devices.find(d => d.id === siguiente);
-        }
-        return encontrados;
-      };
-
-      // highlightId es ancestro de nodeId
-      if (ascendentesDe(nodeId).has(highlightId)) return true;
-      // nodeId es ancestro de highlightId
-      if (ascendentesDe(highlightId).has(nodeId)) return true;
-      return false;
+      if (!highlightId) return true;
+      return this._relatedNodes ? this._relatedNodes.has(nodeId) : nodeId === highlightId;
     }
 
     // ============================================================
